@@ -79,10 +79,27 @@ def run_full(args: argparse.Namespace) -> None:
 def render_main(
     _analysis: str | None = None, _format: str = "md", _output_dir: str | None = None
 ) -> None:
-    raise SystemExit(
-        "codeatlas-render: rendering is not implemented yet "
-        "(milestone M6). See docs/IMPLEMENTATION_ROADMAP.md."
-    )
+    if _analysis is None:
+        parser = argparse.ArgumentParser(prog="codeatlas-render")
+        parser.add_argument("analysis_path")
+        parser.add_argument("--format", default="md", choices=("md", "html", "mdx", "rst"))
+        parser.add_argument("--output-dir")
+        args = parser.parse_args()
+        _analysis = args.analysis_path
+        _format = args.format
+        _output_dir = args.output_dir
+
+    analysis = Path(_analysis)
+    if not analysis.is_file():
+        raise SystemExit(f"codeatlas-render: analysis file not found: {_analysis}")
+
+    output_dir = Path(_output_dir) if _output_dir else analysis.parent
+
+    from codeatlas.render import render
+
+    written = render(_format, analysis, output_dir)
+    for path in written:
+        print(f"Rendered {path}")
 
 
 def _atomic_write(path: Path, content: str) -> None:

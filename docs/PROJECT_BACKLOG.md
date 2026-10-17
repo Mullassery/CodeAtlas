@@ -50,8 +50,8 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 ## Milestone M6 — Rendering
 | ID | Task | Status | AC |
 |---|---|---|---|
-| M6-1 | md/mdx/html/rst generators + mermaid/cytoscape | todo | golden docs |
-| M6-2 | Render manifest + overwrite protection | todo | tests |
+| M6-1 | md/mdx/html/rst generators + mermaid/cytoscape | done | pytest golden checks |
+| M6-2 | Render manifest + overwrite protection | done | pytest tests |
 
 ## Milestone M7 — Optional LLM enrichment
 | ID | Task | Status | AC |
