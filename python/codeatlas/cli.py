@@ -67,6 +67,13 @@ def run_full(args: argparse.Namespace) -> None:
         str(repo_path), project_name=args.project_name, depth_cap=args.depth_cap
     )
 
+    analysis = json.loads(analysis_json)
+    try:
+        _maybe_enrich(analysis)
+    except SystemExit:
+        raise
+    analysis_json = json.dumps(analysis, indent=2)
+
     _atomic_write(output_dir / ANALYSIS_FILENAME, analysis_json)
     _atomic_write(output_dir / FINGERPRINT_FILENAME, fingerprint_json)
 
@@ -74,6 +81,23 @@ def run_full(args: argparse.Namespace) -> None:
 
     if args.render:
         render_main(_analysis=str(output_dir / ANALYSIS_FILENAME), _format=args.render)
+
+
+def _maybe_enrich(analysis: dict) -> None:
+    from codeatlas.llm import LLMError, enrich, resolve_config
+
+    if resolve_config() is None:
+        return
+    try:
+        enrich(analysis)
+    except LLMError as exc:
+        if exc.kind == "auth":
+            print(f"\ncodeatlas: {exc}", file=sys.stderr)
+            raise SystemExit(2) from exc
+        if exc.kind == "quota":
+            print(f"\ncodeatlas: {exc}", file=sys.stderr)
+            raise SystemExit(3) from exc
+        print(f"codeatlas: LLM enrichment failed, keeping deterministic names: {exc}", file=sys.stderr)
 
 
 def render_main(

@@ -56,8 +56,8 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 ## Milestone M7 — Optional LLM enrichment
 | ID | Task | Status | AC |
 |---|---|---|---|
-| M7-1 | Provider facade + naming/description | todo | mock-provider tests |
-| M7-2 | Auth/quota exit codes 2/3 | todo | tests |
+| M7-1 | Provider facade + naming/description (OpenAI-compatible) | done | mock-provider tests |
+| M7-2 | Auth/quota exit codes 2/3 | done | error-mapping tests |
 
 ## Milestone M8 — Hardening
 | ID | Task | Status | AC |
