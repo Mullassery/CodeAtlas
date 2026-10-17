@@ -1,0 +1,16 @@
+[package]
+name = "codeatlas-py"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+description = "PyO3 bindings for the CodeAtlas core (codeatlas._core)"
+
+[lib]
+name = "_core"
+crate-type = ["cdylib"]
+
+[dependencies]
+codeatlas-core = { path = "../core" }
+pyo3.workspace = true

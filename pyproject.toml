@@ -1,0 +1,32 @@
+[build-system]
+requires = ["maturin>=1.8,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "codeatlas"
+version = "0.1.0"
+description = "Rust-native architecture maps for codebases"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Mullassery" }]
+keywords = ["architecture", "diagrams", "static-analysis", "code-visualization", "rust"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Rust",
+  "Programming Language :: Python",
+  "Topic :: Software Development :: Documentation",
+]
+
+[project.scripts]
+codeatlas = "codeatlas.cli:main"
+codeatlas-render = "codeatlas.cli:render_main"
+
+[tool.maturin]
+module-name = "codeatlas._core"
+manifest-path = "crates/py/Cargo.toml"
+python-source = "python"
+features = ["pyo3/extension-module"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
