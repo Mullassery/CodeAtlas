@@ -5,6 +5,10 @@
 //!
 //! See `docs/architecture/ARCHITECTURE.md` for the full module breakdown.
 
+pub mod analysis;
+pub mod discovery;
+pub mod extract;
+pub mod fingerprint;
 pub mod model;
 
 /// The engine version string, reported by the Python binding.

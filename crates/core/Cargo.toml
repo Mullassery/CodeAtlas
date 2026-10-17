@@ -11,6 +11,10 @@ description = "CodeAtlas deterministic codebase architecture analysis core"
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
+sha2.workspace = true
+ignore.workspace = true
+tree-sitter.workspace = true
+tree-sitter-python.workspace = true
 
 [lib]
 name = "codeatlas_core"

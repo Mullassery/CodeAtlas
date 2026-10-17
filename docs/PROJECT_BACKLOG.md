@@ -12,26 +12,26 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | M0-1 | Cargo workspace (core + py), maturin mixed layout, `.gitignore`, LICENSE/NOTICE | done | `cargo build --workspace` OK (with PYO3_PYTHON) |
 | M0-2 | PyO3 binding `codeatlas._core.version()` | done | `maturin build` → wheel imports; `codeatlas --version` prints `0.1.0` |
 | M0-3 | Rust unit tests run | done | `cargo test -p codeatlas-core` → 2 passed |
-| M0-4 | CI (fmt, clippy, test, build) | todo | `.github/workflows/ci.yml` |
+| M0-4 | CI (fmt, clippy, test, build) | done | `.github/workflows/ci.yml` |
 
 ## Milestone M1 — Domain models & serialization
 | ID | Task | Status | AC |
 |---|---|---|---|
-| M1-1 | Full `analysis.json` serde model (metadata, files, methods_index, components, relations) | todo | golden serialization matches upstream schema |
-| M1-2 | Component-id assignment (`1`, `1.2`, …) + method-key convention | todo | unit tests |
-| M1-3 | `fingerprint.json` + tree hash | todo | deterministic hash tests |
+| M1-1 | Full `analysis.json` serde model (metadata, files, methods_index, components, relations) | done | golden serialization matches upstream schema |
+| M1-2 | Component-id assignment (`1`, `1.2`, …) + method-key convention | done | unit tests |
+| M1-3 | `fingerprint.json` + tree hash | done | deterministic hash tests |
 
 ## Milestone M2 — Discovery & ignore
 | ID | Task | Status | AC |
 |---|---|---|---|
-| M2-1 | Suffix→language map + file walker | todo | fixture discovery tests |
-| M2-2 | gitwildmatch ignore (`.gitignore` + `.codeboardingignore`) | todo | ignore fixtures |
+| M2-1 | Suffix→language map + file walker | done | fixture discovery tests |
+| M2-2 | gitwildmatch ignore (`.gitignore` + `.codeboardingignore`) | done | ignore fixtures |
 
 ## Milestone M3 — Tree-sitter analysis (Python first)
 | ID | Task | Status | AC |
 |---|---|---|---|
-| M3-1 | Python extractor: symbols, qualified names, spans | todo | golden graph |
-| M3-2 | Python calls + imports + `class X(Base)` | todo | unit tests |
+| M3-1 | Python extractor: symbols, qualified names, spans | done | golden graph |
+| M3-2 | Python calls + imports + `class X(Base)` | done | unit tests |
 
 ## Milestone M4 — Clustering
 | ID | Task | Status | AC |
