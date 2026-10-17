@@ -16,8 +16,8 @@ Disposition of every upstream feature from `docs/audit/FEATURE_INVENTORY.md`:
 | SA-12/14 call graph + package deps | tree-sitter call/import/package extraction | core (subset) |
 | SA-13 class hierarchy | syntactic extends/implements/impl | core (subset) |
 | SA-15/16 references + promotion | Rust symbol table + references | core |
-| CL-01 deterministic partition | Rust port of draft/replay | core |
-| CL-02 groupers kinship/affinity | Rust | core (planner deferred) |
+| CL-01 deterministic partition | Rust directory-based hierarchical partition (simplified) | core (full draft/replay port deferred) |
+| CL-02 groupers kinship/affinity | Rust (simplified: deterministic directory partition + single-child absorption) | core (full affinity fold deferred) |
 | CL-03 TreeSpec v4 | serde `tree_spec` | core |
 | CL-04/05/06 ids, absorption, expand | Rust | core |
 | LLM-02/03 (naming/desc/relations) | wrapper via provider | wrapper (only when configured) |

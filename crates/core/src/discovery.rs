@@ -76,7 +76,27 @@ pub struct SourceFile {
 /// remaining file by its suffix. Returns files sorted by relative path for
 /// deterministic downstream ordering.
 pub fn discover_source_files(root: &Path, output_dir: &Path) -> Vec<SourceFile> {
-    let mut files: Vec<SourceFile> = Vec::new();
+    walk_file_paths(root, output_dir)
+        .into_iter()
+        .filter_map(|rel_path| {
+            let suffix = rel_path
+                .rsplit_once('.')
+                .map(|(_, ext)| format!(".{ext}"))
+                .unwrap_or_default();
+            let language = Language::from_suffix(&suffix)?;
+            Some(SourceFile { rel_path, language })
+        })
+        .collect()
+}
+
+/// All non-ignored file paths (repo-relative, sorted), regardless of language.
+/// Used for file-coverage accounting.
+pub fn discover_all_files(root: &Path, output_dir: &Path) -> Vec<String> {
+    walk_file_paths(root, output_dir)
+}
+
+fn walk_file_paths(root: &Path, output_dir: &Path) -> Vec<String> {
+    let mut files: Vec<String> = Vec::new();
 
     let walker = ignore::WalkBuilder::new(root)
         .git_ignore(true)
@@ -98,23 +118,13 @@ pub fn discover_source_files(root: &Path, output_dir: &Path) -> Vec<SourceFile> 
         if has_always_ignored_component(root, path) {
             continue;
         }
-        let Some(suffix) = path.extension().and_then(|s| s.to_str()) else {
-            continue;
-        };
-        let suffix = format!(".{suffix}");
-        let Some(language) = Language::from_suffix(&suffix) else {
-            continue;
-        };
         if let Ok(rel) = path.strip_prefix(root) {
-            files.push(SourceFile {
-                rel_path: rel.to_string_lossy().replace('\\', "/"),
-                language,
-            });
+            files.push(rel.to_string_lossy().replace('\\', "/"));
         }
     }
 
-    files.sort_by(|a, b| a.rel_path.cmp(&b.rel_path));
-    files.dedup_by(|a, b| a.rel_path == b.rel_path);
+    files.sort();
+    files.dedup();
     files
 }
 
@@ -143,32 +153,8 @@ fn has_always_ignored_component(root: &Path, path: &Path) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::testutil::TempDir;
     use std::fs;
-    use std::path::PathBuf;
-
-    // Minimal temp-dir helper (no external crate): create under std::env::temp_dir.
-    struct TempDir(PathBuf);
-
-    impl TempDir {
-        fn new() -> Self {
-            let dir = std::env::temp_dir().join(format!(
-                "codeatlas-test-{}-{}",
-                std::process::id(),
-                std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap()
-                    .as_nanos()
-            ));
-            fs::create_dir_all(&dir).unwrap();
-            TempDir(dir)
-        }
-    }
-
-    impl Drop for TempDir {
-        fn drop(&mut self) {
-            let _ = fs::remove_dir_all(&self.0);
-        }
-    }
 
     #[test]
     fn suffix_mapping() {
@@ -186,7 +172,7 @@ mod tests {
     #[test]
     fn discovers_files_and_honors_ignores() {
         let tmp = TempDir::new();
-        let root = tmp.0.clone();
+        let root = tmp.path();
         fs::create_dir_all(root.join("src/pkg")).unwrap();
         fs::create_dir_all(root.join("node_modules")).unwrap();
         fs::write(root.join("src/a.py"), "x = 1").unwrap();
@@ -196,7 +182,7 @@ mod tests {
         fs::write(root.join("node_modules/d.js"), "ignored").unwrap();
         fs::write(root.join(".codeboardingignore"), "src/c.go\n").unwrap();
 
-        let files = discover_source_files(&root, &root.join(".codeboarding"));
+        let files = discover_source_files(root, &root.join(".codeboarding"));
         let rels: Vec<&str> = files.iter().map(|f| f.rel_path.as_str()).collect();
         assert_eq!(rels, vec!["src/a.py", "src/pkg/b.py"]);
         assert_eq!(present_languages(&files).len(), 1);

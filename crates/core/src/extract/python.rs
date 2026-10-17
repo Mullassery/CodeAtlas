@@ -96,6 +96,24 @@ pub fn extract<'a>(module: &'a str, source: &'a str) -> Result<ExtractedFile, su
     ctx.out.imports.dedup();
     ctx.out.superclass_names.sort();
     ctx.out.superclass_names.dedup();
+    ctx.out.class_bases = ctx.class_bases;
+    ctx.out.class_bases.sort();
+    ctx.out.class_bases.dedup();
+    ctx.out.unresolved_calls.sort_by(|a, b| {
+        (
+            a.caller.as_str(),
+            a.callee_simple.as_str(),
+            a.line,
+            a.column,
+        )
+            .cmp(&(
+                b.caller.as_str(),
+                b.callee_simple.as_str(),
+                b.line,
+                b.column,
+            ))
+    });
+    ctx.out.unresolved_calls.dedup();
 
     Ok(ctx.out)
 }
@@ -282,7 +300,7 @@ fn handle_call<'a>(node: Node<'a>, src: &'a [u8], parents: &[Parent], ctx: &mut 
     if let Some(target) = target {
         if target != caller {
             ctx.out.edges.push(Edge {
-                source: caller,
+                source: caller.clone(),
                 destination: target,
                 call_sites: vec![CallSite {
                     line: node.start_position().row + 1,
@@ -290,6 +308,13 @@ fn handle_call<'a>(node: Node<'a>, src: &'a [u8], parents: &[Parent], ctx: &mut 
                 }],
             });
         }
+    } else if !simple.is_empty() {
+        ctx.out.unresolved_calls.push(super::UnresolvedCall {
+            caller,
+            callee_simple: simple,
+            line: node.start_position().row + 1,
+            column: node.start_position().column + 1,
+        });
     }
 }
 

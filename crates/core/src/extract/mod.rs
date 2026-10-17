@@ -15,6 +15,16 @@ pub struct Import {
     pub module: String,
 }
 
+/// A call site whose target could not be resolved within the file; resolved
+/// later against the whole-repo symbol index (unique simple-name heuristic).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct UnresolvedCall {
+    pub caller: String,
+    pub callee_simple: String,
+    pub line: usize,
+    pub column: usize,
+}
+
 /// The per-file result of extraction.
 #[derive(Debug, Clone, Default)]
 pub struct ExtractedFile {
@@ -24,6 +34,10 @@ pub struct ExtractedFile {
     pub imports: Vec<Import>,
     /// Superclass simple names (for cross-file hierarchy resolution).
     pub superclass_names: Vec<String>,
+    /// (class qualified name, base simple name) pairs.
+    pub class_bases: Vec<(String, String)>,
+    /// Calls unresolved within the file, for cross-file resolution.
+    pub unresolved_calls: Vec<UnresolvedCall>,
 }
 
 #[derive(Debug, thiserror::Error)]

@@ -36,14 +36,16 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 ## Milestone M4 — Clustering
 | ID | Task | Status | AC |
 |---|---|---|---|
-| M4-1 | Name-tree draft/replay + affinity/kinship groupers | todo | reference partition on fixtures |
-| M4-2 | TreeSpec serialization | todo | replay == draft |
+| M4-1 | Deterministic hierarchical partition (directory-based; simplified vs upstream affinity/kinship) | done | fixture partition tests |
+| M4-2 | TreeSpec serialization + replay | todo | deferred to incremental (P2) |
 
 ## Milestone M5 — End-to-end vertical slice
 | ID | Task | Status | AC |
 |---|---|---|---|
-| M5-1 | Python wrapper `codeatlas full --local` → analysis.json (+ sidecars) | todo | fixture run asserts output |
-| M5-2 | Deterministic names without LLM | todo | no-provider run succeeds |
+| M5-1 | Python wrapper `codeatlas full --local` → analysis.json + fingerprint.json | done | fixture run asserts output |
+| M5-2 | Deterministic names without LLM | done | no-provider run succeeds |
+| M5-3 | Cross-file call resolution (unique-name heuristic) + component relations | done | pipeline test |
+| M5-4 | `file_coverage.json` artifact | todo | separate coverage file |
 
 ## Milestone M6 — Rendering
 | ID | Task | Status | AC |
