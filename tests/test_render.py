@@ -12,7 +12,7 @@ def _analysis(tmp_path):
 
     import codeatlas
 
-    analysis_json, _ = codeatlas.analyze(str(tmp_path), project_name="demo")
+    analysis_json, _, _ = codeatlas.analyze(str(tmp_path), project_name="demo")
     analysis_path = tmp_path / "analysis.json"
     analysis_path.write_text(analysis_json)
     return analysis_path, json.loads(analysis_json)

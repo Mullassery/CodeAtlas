@@ -13,7 +13,9 @@ def _fixture(tmp_path):
 
 def test_analyze_smoke(tmp_path):
     _fixture(tmp_path)
-    analysis_json, fingerprint_json = codeatlas.analyze(str(tmp_path), project_name="demo")
+    analysis_json, fingerprint_json, file_coverage_json = codeatlas.analyze(
+        str(tmp_path), project_name="demo"
+    )
 
     analysis = json.loads(analysis_json)
     assert analysis["metadata"]["repo_name"] == "demo"
@@ -34,6 +36,10 @@ def test_analyze_smoke(tmp_path):
     fingerprint = json.loads(fingerprint_json)
     assert "app/main.py" in fingerprint["files"]
     assert "core/engine.py" in fingerprint["files"]
+
+    coverage = json.loads(file_coverage_json)
+    assert coverage["version"] == 1
+    assert coverage["summary"]["analyzed"] >= 3
 
 
 def test_version():

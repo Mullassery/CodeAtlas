@@ -144,6 +144,23 @@ impl MethodIndexEntry {
     }
 }
 
+/// An excluded file with a reason.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NotAnalyzedFile {
+    pub path: String,
+    pub reason: String,
+}
+
+/// The `file_coverage.json` sidecar: which files were analyzed vs. excluded.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FileCoverageReport {
+    pub version: u32,
+    pub generated_at: String,
+    pub analyzed_files: Vec<String>,
+    pub not_analyzed_files: Vec<NotAnalyzedFile>,
+    pub summary: FileCoverageSummary,
+}
+
 /// Metadata about the analysis run.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AnalysisMetadata {

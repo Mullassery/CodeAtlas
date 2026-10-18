@@ -112,6 +112,9 @@ fn walk_file_paths(root: &Path, output_dir: &Path) -> Vec<String> {
         if !entry.file_type().map(|t| t.is_file()).unwrap_or(false) {
             continue;
         }
+        if entry.path_is_symlink() {
+            continue;
+        }
         if is_within(path, output_dir) {
             continue;
         }

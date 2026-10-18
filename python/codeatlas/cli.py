@@ -17,6 +17,7 @@ from codeatlas import __version__, analyze
 
 ANALYSIS_FILENAME = "analysis.json"
 FINGERPRINT_FILENAME = "fingerprint.json"
+FILE_COVERAGE_FILENAME = "file_coverage.json"
 OUTPUT_DIR_NAME = ".codeboarding"
 
 
@@ -63,7 +64,7 @@ def run_full(args: argparse.Namespace) -> None:
     output_dir = Path(args.output_dir) if args.output_dir else repo_path / OUTPUT_DIR_NAME
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    analysis_json, fingerprint_json = analyze(
+    analysis_json, fingerprint_json, file_coverage_json = analyze(
         str(repo_path), project_name=args.project_name, depth_cap=args.depth_cap
     )
 
@@ -76,6 +77,7 @@ def run_full(args: argparse.Namespace) -> None:
 
     _atomic_write(output_dir / ANALYSIS_FILENAME, analysis_json)
     _atomic_write(output_dir / FINGERPRINT_FILENAME, fingerprint_json)
+    _atomic_write(output_dir / FILE_COVERAGE_FILENAME, file_coverage_json)
 
     print(f"Analysis written to {output_dir / ANALYSIS_FILENAME}")
 

@@ -8,8 +8,8 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use crate::analysis::{
-    method_key, AnalysisMetadata, Component, FileCoverageSummary, FileEntry, MethodIndexEntry,
-    Relation, RelationCallSite, RelationEdge, UnifiedAnalysis,
+    method_key, AnalysisMetadata, Component, FileCoverageReport, FileCoverageSummary, FileEntry,
+    MethodIndexEntry, NotAnalyzedFile, Relation, RelationCallSite, RelationEdge, UnifiedAnalysis,
 };
 use crate::clustering::cluster;
 use crate::discovery::{discover_all_files, discover_source_files};
@@ -35,6 +35,7 @@ pub struct AnalyzeOptions {
 pub struct AnalyzeResult {
     pub analysis: UnifiedAnalysis,
     pub fingerprint: BTreeMap<String, String>,
+    pub file_coverage: FileCoverageReport,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -44,6 +45,9 @@ pub enum PipelineError {
     #[error("extraction failed for {0}: {1}")]
     Extract(String, extract::Error),
 }
+
+/// Files larger than this are not parsed (defense against pathological inputs).
+const MAX_FILE_BYTES: usize = 8 * 1024 * 1024;
 
 /// Run a full deterministic analysis of the repository at `repo_path`.
 pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
@@ -64,6 +68,9 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
     for file in &source_files {
         let module = extract::module_path(&file.rel_path);
         let bytes = std::fs::read(opts.repo_path.join(&file.rel_path)).unwrap_or_default();
+        if bytes.len() > MAX_FILE_BYTES {
+            continue;
+        }
         let source = String::from_utf8_lossy(&bytes);
         let extracted = extract::extract(file.language, &module, &source)
             .map_err(|e| PipelineError::Extract(file.rel_path.clone(), e))?;
@@ -143,10 +150,30 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
         not_analyzed: all_files.len().saturating_sub(source_files.len()),
         not_analyzed_by_reason: BTreeMap::new(),
     };
+    let generated_at = crate::analysis::utc_now_iso8601();
+
+    let analyzed_files: Vec<String> = source_files.iter().map(|f| f.rel_path.clone()).collect();
+    let analyzed_set: std::collections::BTreeSet<&str> =
+        analyzed_files.iter().map(|s| s.as_str()).collect();
+    let not_analyzed_files: Vec<NotAnalyzedFile> = all_files
+        .iter()
+        .filter(|f| !analyzed_set.contains(f.as_str()))
+        .map(|f| NotAnalyzedFile {
+            path: f.clone(),
+            reason: "other".to_string(),
+        })
+        .collect();
+    let file_coverage = FileCoverageReport {
+        version: 1,
+        generated_at: generated_at.clone(),
+        analyzed_files,
+        not_analyzed_files,
+        summary: summary.clone(),
+    };
 
     let analysis = UnifiedAnalysis {
         metadata: AnalysisMetadata {
-            generated_at: crate::analysis::utc_now_iso8601(),
+            generated_at,
             source_tree_hash: tree_hash(&file_hashes),
             repo_name: opts.project_name.clone(),
             depth_level,
@@ -164,6 +191,7 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
     Ok(AnalyzeResult {
         analysis,
         fingerprint: file_hashes,
+        file_coverage,
     })
 }
 
@@ -441,5 +469,76 @@ mod tests {
             depth_cap: 3,
         };
         assert!(matches!(analyze(&opts), Err(PipelineError::NoSourceFiles)));
+    }
+
+    #[test]
+    fn oversized_source_is_not_parsed() {
+        let tmp = TempDir::new();
+        let root = tmp.path();
+        let big = "x = 1\n".repeat(2_000_000);
+        fs::write(root.join("big.py"), big).unwrap();
+        fs::write(root.join("small.py"), "def f():\n    return 1\n").unwrap();
+
+        let opts = AnalyzeOptions {
+            repo_path: root.to_path_buf(),
+            project_name: "big".into(),
+            depth_cap: 3,
+        };
+        let result = analyze(&opts).unwrap();
+        assert!(result
+            .analysis
+            .methods_index
+            .contains_key("small.py|small.f"));
+        assert!(!result
+            .analysis
+            .methods_index
+            .keys()
+            .any(|k| k.starts_with("big.py")));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn symlinked_file_is_skipped() {
+        let tmp = TempDir::new();
+        let root = tmp.path();
+        fs::write(root.join("real.py"), "def f():\n    return 1\n").unwrap();
+        let outside =
+            std::env::temp_dir().join(format!("codeatlas-outside-{}", std::process::id()));
+        fs::write(&outside, "def g():\n    return 2\n").unwrap();
+        std::os::unix::fs::symlink(&outside, root.join("link.py")).unwrap();
+
+        let opts = AnalyzeOptions {
+            repo_path: root.to_path_buf(),
+            project_name: "symlink".into(),
+            depth_cap: 3,
+        };
+        let result = analyze(&opts).unwrap();
+        assert!(result.analysis.methods_index.contains_key("real.py|real.f"));
+        assert!(!result
+            .analysis
+            .methods_index
+            .keys()
+            .any(|k| k.starts_with("link.py")));
+
+        let _ = fs::remove_file(&outside);
+    }
+
+    #[test]
+    fn hostile_content_does_not_panic() {
+        let tmp = TempDir::new();
+        let root = tmp.path();
+        fs::write(
+            root.join("evil.py"),
+            [0xff, 0xfe, 0x00, b'\n', b'x', b'=', b'1', 0x00],
+        )
+        .unwrap();
+
+        let opts = AnalyzeOptions {
+            repo_path: root.to_path_buf(),
+            project_name: "hostile".into(),
+            depth_cap: 3,
+        };
+        // Must not panic on invalid UTF-8 or nonsensical syntax.
+        let _ = analyze(&opts);
     }
 }
