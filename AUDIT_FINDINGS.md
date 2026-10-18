@@ -26,7 +26,7 @@ roadmap items were started.
 
 ```
 cargo test -p codeatlas-core
-# 37 lib tests + 1 golden test passed
+# 41 lib tests + 1 golden test passed
 
 cargo fmt --all --check
 cargo clippy -p codeatlas-core --all-targets -- -D warnings
@@ -35,6 +35,7 @@ cargo clippy -p codeatlas-core --all-targets -- -D warnings
 
 ## Follow-up shipped
 
+- Java, PHP, and C# extractors are now implemented; 41 lib tests + golden pass.
 - `codeatlas diff BEFORE AFTER [--format text|md|json]` compares two
   `analysis.json` maps (components, relations, methods) and
   `--fail-on-change` exits 1 for CI. `tests/test_diff.py`: 3 passed, 1 skipped
