@@ -7,6 +7,7 @@
 pub mod go;
 pub mod python;
 pub mod rust;
+pub mod typescript;
 
 use crate::discovery::Language;
 use crate::model::{Edge, Node, ReferenceEdge};
@@ -58,6 +59,9 @@ pub fn extract(language: Language, module: &str, source: &str) -> Result<Extract
         Language::Python => python::extract(module, source),
         Language::Rust => rust::extract(module, source),
         Language::Go => go::extract(module, source),
+        Language::TypeScript | Language::JavaScript => {
+            typescript::extract(module, source, language)
+        }
         other => Err(Error::Unsupported(other)),
     }
 }

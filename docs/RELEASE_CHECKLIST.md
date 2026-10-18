@@ -30,5 +30,5 @@ without explicit authorization.
 - [ ] Wheel/package distribution strategy documented (manylinux + platform wheels).
 
 ## Remaining before a `0.2.0` tag
-- [ ] JavaScript/TypeScript extractor (currently `unsupported_language`).
+- [ ] Java/PHP/C# extractors (currently reported as `unsupported_language`).
 - [ ] Golden/snapshot tests for `analysis.json` against a committed fixture.

@@ -17,8 +17,8 @@ reStructuredText. An optional LLM step names and describes components.
 - Optional component naming/description via an OpenAI-compatible provider (OpenAI, Ollama,
   OpenRouter, DeepSeek, LiteLLM, LM Studio). Without a provider, analysis still succeeds with
   deterministic names.
-- Languages: **Python**, **Rust**, and **Go** (tree-sitter). Discovery recognizes `.js/.ts/.java/.php/.cs`; their
-  parsers land next.
+- Languages: **Python**, **Rust**, **Go**, and **JavaScript/TypeScript** (tree-sitter). Discovery recognizes
+  `.java/.php/.cs`; their parsers land next.
 
 ## Quick start
 

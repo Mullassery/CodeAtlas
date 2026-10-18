@@ -9,8 +9,10 @@ All notable changes to CodeAtlas are documented here. The format follows
 ### Added
 - Deterministic analysis core in Rust: repository discovery (gitignore +
   `.codeboardingignore`), content fingerprinting, and tree-sitter extraction
-  for **Python**, **Rust**, and **Go** (symbols, qualified names, calls, imports,
-  class/receiver hierarchies, cross-file unique-name call resolution).
+  for **Python**, **Rust**, **Go**, and **JavaScript/TypeScript** (symbols,
+  qualified names, calls, imports, class/receiver hierarchies, cross-file
+  unique-name call resolution). `.ts`/`.tsx` are auto-disambiguated by re-parsing
+  with whichever grammar produces fewer parse errors.
 - Deterministic directory-based component clustering with hierarchical component
   ids and per-scope (lowest-common-ancestor) relations.
 - Upstream-compatible `analysis.json` output plus `fingerprint.json` and
@@ -33,5 +35,5 @@ All notable changes to CodeAtlas are documented here. The format follows
   see `docs/audit/KNOWN_GAPS.md`.
 - Clustering is a simplified deterministic directory partition (full
   affinity/kinship + TreeSpec replay deferred to incremental support).
-- JavaScript/TypeScript, Java, PHP, C#, and Kotlin parsers not yet implemented
-  (recognized in discovery, recorded as `unsupported_language` in coverage).
+- Java, PHP, C#, and Kotlin parsers not yet implemented (recognized in
+  discovery, recorded as `unsupported_language` in coverage).

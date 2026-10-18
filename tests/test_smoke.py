@@ -45,3 +45,37 @@ def test_analyze_smoke(tmp_path):
 def test_version():
     assert isinstance(codeatlas.__version__, str)
     assert codeatlas.__version__
+
+
+def test_analyze_javascript_typescript(tmp_path):
+    (tmp_path / "web").mkdir()
+    (tmp_path / "web" / "service.ts").write_text(
+        "export class Service {\n"
+        "  run(): number {\n"
+        "    return this.help();\n"
+        "  }\n"
+        "  help(): number {\n"
+        "    return 42;\n"
+        "  }\n"
+        "}\n"
+    )
+    (tmp_path / "web" / "main.js").write_text(
+        "function boot() {\n  const s = new Service();\n  return s.run();\n}\n"
+    )
+
+    analysis_json, _, file_coverage_json = codeatlas.analyze(
+        str(tmp_path), project_name="web"
+    )
+    analysis = json.loads(analysis_json)
+    methods = list(analysis["methods_index"].keys())
+    assert "web/service.ts|web.service.Service" in methods
+    assert "web/service.ts|web.service.Service.run" in methods
+    assert "web/main.js|web.main.boot" in methods
+
+    coverage = json.loads(file_coverage_json)
+    assert coverage["summary"]["analyzed"] >= 2
+    reasons = [
+        f["reason"] for f in coverage["not_analyzed_files"]
+    ]
+    assert "unsupported_language" not in reasons
+
