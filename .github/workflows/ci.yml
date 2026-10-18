@@ -21,6 +21,8 @@ jobs:
         run: cargo clippy --workspace --all-targets -- -D warnings
       - name: Test core
         run: cargo test -p codeatlas-core
+      - name: Dependency audit (licenses + advisories)
+        uses: EmbarkStudios/cargo-deny-action@v2
 
   python:
     name: Python (build wheel + import + tests)

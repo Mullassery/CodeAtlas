@@ -4,6 +4,7 @@
 //! or augment it later without touching clustering or serialization
 //! (ADR-0002). v1 ships a single tree-sitter implementation per language.
 
+pub mod go;
 pub mod python;
 pub mod rust;
 
@@ -56,6 +57,7 @@ pub fn extract(language: Language, module: &str, source: &str) -> Result<Extract
     match language {
         Language::Python => python::extract(module, source),
         Language::Rust => rust::extract(module, source),
+        Language::Go => go::extract(module, source),
         other => Err(Error::Unsupported(other)),
     }
 }

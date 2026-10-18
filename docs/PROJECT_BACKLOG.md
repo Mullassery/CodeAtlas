@@ -69,7 +69,7 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | ID | Task | Status | AC |
 |---|---|---|---|
 | M9-1 | Rust tree-sitter extractor | done | unit tests + self-dogfood |
-| M9-2 | Go extractor | todo | |
+| M9-2 | Go extractor | done | unit tests |
 | M9-3 | JavaScript/TypeScript extractor | todo | |
 | M9-4 | Java extractor | todo | |
 
