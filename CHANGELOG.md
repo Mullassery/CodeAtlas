@@ -4,6 +4,15 @@ All notable changes to CodeAtlas are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-10-18
+
+### Added
+- `file_coverage.json` now includes a per-file `imports` map (repo-relative
+  path -> sorted dotted module names), enabling structural dependency and
+  repository-boundary checks that previously required text scanning.
+- Release workflow (`.github/workflows/release.yml`): manylinux/musllinux,
+  macOS, and Windows wheels plus sdist, published via PyPI Trusted Publishing.
+
 ## [Unreleased]
 
 ### Added
