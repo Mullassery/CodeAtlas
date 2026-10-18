@@ -1,0 +1,314 @@
+{
+  "metadata": {
+    "generated_at": "<normalized>",
+    "source_tree_hash": "608daab5c0e85d8ed9b6937836ce3c97caba5cb40a37cc9e750dd6f0c76966b6",
+    "repo_name": "sample_repo",
+    "depth_level": 1,
+    "depth_cap": 3,
+    "file_coverage_summary": {
+      "total_files": 7,
+      "analyzed": 7,
+      "not_analyzed": 0,
+      "not_analyzed_by_reason": {}
+    },
+    "tree_spec": {}
+  },
+  "description": "Architecture map of sample_repo.",
+  "files": {
+    "app/main.py": {
+      "method_keys": [
+        "app/main.py|app.main.run"
+      ],
+      "content_hash": "abb9f631cc0e9908",
+      "module_hash": ""
+    },
+    "app/util.py": {
+      "method_keys": [
+        "app/util.py|app.util.Service",
+        "app/util.py|app.util.Service.perform",
+        "app/util.py|app.util.Service.assist"
+      ],
+      "content_hash": "b20ad0b0aa99e496",
+      "module_hash": ""
+    },
+    "core/engine.py": {
+      "method_keys": [
+        "core/engine.py|core.engine.start",
+        "core/engine.py|core.engine.helper"
+      ],
+      "content_hash": "51ceafc04648e549",
+      "module_hash": ""
+    },
+    "lib/handler.go": {
+      "method_keys": [
+        "lib/handler.go|lib.handler.Server",
+        "lib/handler.go|lib.handler.(Server).Serve",
+        "lib/handler.go|lib.handler.(Server).ping"
+      ],
+      "content_hash": "ea7cdce687ecff3d",
+      "module_hash": ""
+    },
+    "lib/mod.rs": {
+      "method_keys": [
+        "lib/mod.rs|lib.mod.dispatch",
+        "lib/mod.rs|lib.mod.run"
+      ],
+      "content_hash": "329ea1ac166dbac0",
+      "module_hash": ""
+    },
+    "web/index.js": {
+      "method_keys": [
+        "web/index.js|web.index.boot"
+      ],
+      "content_hash": "fa9caad328dbc0c6",
+      "module_hash": ""
+    },
+    "web/service.ts": {
+      "method_keys": [
+        "web/service.ts|web.service.Widget",
+        "web/service.ts|web.service.Widget.render",
+        "web/service.ts|web.service.Widget.measure"
+      ],
+      "content_hash": "37bfb56fd2256911",
+      "module_hash": ""
+    }
+  },
+  "methods_index": {
+    "app/main.py|app.main.run": {
+      "file_path": "app/main.py",
+      "qualified_name": "app.main.run",
+      "start_line": 5,
+      "end_line": 8,
+      "type": "FUNCTION",
+      "content_hash": ""
+    },
+    "app/util.py|app.util.Service": {
+      "file_path": "app/util.py",
+      "qualified_name": "app.util.Service",
+      "start_line": 1,
+      "end_line": 8,
+      "type": "CLASS",
+      "content_hash": ""
+    },
+    "app/util.py|app.util.Service.assist": {
+      "file_path": "app/util.py",
+      "qualified_name": "app.util.Service.assist",
+      "start_line": 7,
+      "end_line": 8,
+      "type": "METHOD",
+      "content_hash": ""
+    },
+    "app/util.py|app.util.Service.perform": {
+      "file_path": "app/util.py",
+      "qualified_name": "app.util.Service.perform",
+      "start_line": 4,
+      "end_line": 5,
+      "type": "METHOD",
+      "content_hash": ""
+    },
+    "core/engine.py|core.engine.helper": {
+      "file_path": "core/engine.py",
+      "qualified_name": "core.engine.helper",
+      "start_line": 5,
+      "end_line": 6,
+      "type": "FUNCTION",
+      "content_hash": ""
+    },
+    "core/engine.py|core.engine.start": {
+      "file_path": "core/engine.py",
+      "qualified_name": "core.engine.start",
+      "start_line": 1,
+      "end_line": 2,
+      "type": "FUNCTION",
+      "content_hash": ""
+    },
+    "lib/handler.go|lib.handler.(Server).Serve": {
+      "file_path": "lib/handler.go",
+      "qualified_name": "lib.handler.(Server).Serve",
+      "start_line": 5,
+      "end_line": 7,
+      "type": "METHOD",
+      "content_hash": ""
+    },
+    "lib/handler.go|lib.handler.(Server).ping": {
+      "file_path": "lib/handler.go",
+      "qualified_name": "lib.handler.(Server).ping",
+      "start_line": 9,
+      "end_line": 9,
+      "type": "METHOD",
+      "content_hash": ""
+    },
+    "lib/handler.go|lib.handler.Server": {
+      "file_path": "lib/handler.go",
+      "qualified_name": "lib.handler.Server",
+      "start_line": 3,
+      "end_line": 3,
+      "type": "STRUCT",
+      "content_hash": ""
+    },
+    "lib/mod.rs|lib.mod.dispatch": {
+      "file_path": "lib/mod.rs",
+      "qualified_name": "lib.mod.dispatch",
+      "start_line": 1,
+      "end_line": 3,
+      "type": "FUNCTION",
+      "content_hash": ""
+    },
+    "lib/mod.rs|lib.mod.run": {
+      "file_path": "lib/mod.rs",
+      "qualified_name": "lib.mod.run",
+      "start_line": 5,
+      "end_line": 5,
+      "type": "FUNCTION",
+      "content_hash": ""
+    },
+    "web/index.js|web.index.boot": {
+      "file_path": "web/index.js",
+      "qualified_name": "web.index.boot",
+      "start_line": 1,
+      "end_line": 4,
+      "type": "FUNCTION",
+      "content_hash": ""
+    },
+    "web/service.ts|web.service.Widget": {
+      "file_path": "web/service.ts",
+      "qualified_name": "web.service.Widget",
+      "start_line": 1,
+      "end_line": 9,
+      "type": "CLASS",
+      "content_hash": ""
+    },
+    "web/service.ts|web.service.Widget.measure": {
+      "file_path": "web/service.ts",
+      "qualified_name": "web.service.Widget.measure",
+      "start_line": 6,
+      "end_line": 8,
+      "type": "METHOD",
+      "content_hash": ""
+    },
+    "web/service.ts|web.service.Widget.render": {
+      "file_path": "web/service.ts",
+      "qualified_name": "web.service.Widget.render",
+      "start_line": 2,
+      "end_line": 4,
+      "type": "METHOD",
+      "content_hash": ""
+    }
+  },
+  "components": [
+    {
+      "name": "app",
+      "description": "Owns 4 symbols across 2 file(s).",
+      "file_methods": [
+        {
+          "file_path": "app/main.py",
+          "methods": [
+            "app.main.run"
+          ]
+        },
+        {
+          "file_path": "app/util.py",
+          "methods": [
+            "app.util.Service",
+            "app.util.Service.assist",
+            "app.util.Service.perform"
+          ]
+        }
+      ],
+      "component_id": "1",
+      "can_expand": false,
+      "components": [],
+      "components_relations": []
+    },
+    {
+      "name": "core",
+      "description": "Owns 2 symbols across 1 file(s).",
+      "file_methods": [
+        {
+          "file_path": "core/engine.py",
+          "methods": [
+            "core.engine.helper",
+            "core.engine.start"
+          ]
+        }
+      ],
+      "component_id": "2",
+      "can_expand": false,
+      "components": [],
+      "components_relations": []
+    },
+    {
+      "name": "lib",
+      "description": "Owns 5 symbols across 2 file(s).",
+      "file_methods": [
+        {
+          "file_path": "lib/handler.go",
+          "methods": [
+            "lib.handler.(Server).Serve",
+            "lib.handler.(Server).ping",
+            "lib.handler.Server"
+          ]
+        },
+        {
+          "file_path": "lib/mod.rs",
+          "methods": [
+            "lib.mod.dispatch",
+            "lib.mod.run"
+          ]
+        }
+      ],
+      "component_id": "3",
+      "can_expand": false,
+      "components": [],
+      "components_relations": []
+    },
+    {
+      "name": "web",
+      "description": "Owns 4 symbols across 2 file(s).",
+      "file_methods": [
+        {
+          "file_path": "web/index.js",
+          "methods": [
+            "web.index.boot"
+          ]
+        },
+        {
+          "file_path": "web/service.ts",
+          "methods": [
+            "web.service.Widget",
+            "web.service.Widget.measure",
+            "web.service.Widget.render"
+          ]
+        }
+      ],
+      "component_id": "4",
+      "can_expand": false,
+      "components": [],
+      "components_relations": []
+    }
+  ],
+  "components_relations": [
+    {
+      "relation": "calls",
+      "src_name": "app",
+      "dst_name": "core",
+      "evidence": "",
+      "src_id": "1",
+      "dst_id": "2",
+      "is_static": true,
+      "all_edges": [
+        {
+          "source": "app/main.py|app.main.run",
+          "target": "core/engine.py|core.engine.start",
+          "call_sites": [
+            {
+              "line": 8,
+              "column": 12
+            }
+          ],
+          "description": ""
+        }
+      ]
+    }
+  ]
+}

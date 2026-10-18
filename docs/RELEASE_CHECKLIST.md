@@ -31,4 +31,6 @@ without explicit authorization.
 
 ## Remaining before a `0.2.0` tag
 - [ ] Java/PHP/C# extractors (currently reported as `unsupported_language`).
+- [x] Golden/snapshot test for `analysis.json` against a committed fixture
+      (`crates/core/tests/golden.rs`).
 - [ ] Golden/snapshot tests for `analysis.json` against a committed fixture.

@@ -73,6 +73,11 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | M9-3 | JavaScript/TypeScript extractor | done | TS/TSX auto-fallback, unit tests |
 | M9-4 | Java extractor | todo | |
 
+## Milestone M10 — Regression safety
+| ID | Task | Status | AC |
+|---|---|---|---|
+| M10-1 | Golden `analysis.json` snapshot on a committed multi-language fixture | done | `crates/core/tests/golden.rs` |
+
 ## Risks
 - LSP-level resolution fidelity (G1) — tracked in `docs/audit/KNOWN_GAPS.md`.
 - No private upstream integration fixtures (G10) — build own fixtures.
