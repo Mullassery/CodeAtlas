@@ -25,6 +25,11 @@ All notable changes to CodeAtlas are documented here. The format follows
 - Optional LLM component naming via OpenAI-compatible endpoints, with auth/quota
   exit codes (2/3) and deterministic-name fallback (ADR-0006).
 - Security hardening: symlink and oversize-file skipping; hostile-content tests.
+- `codeatlas-bundle` (new `packages/codeatlas-bundle`): a pure-Python package that
+  runs the analysis, renders docs, and commits them into a repository, with
+  `init`/`build`/`check` commands and a `codeatlas.json` opt-in file.
+- `analyze()` accepts `ignore_paths` so generated output directories can be
+  excluded from discovery.
 
 ### Changed
 - Relations are scoped to their owning (lowest-common-ancestor) component rather

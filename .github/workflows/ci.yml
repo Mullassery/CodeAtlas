@@ -45,3 +45,26 @@ jobs:
           codeatlas --version
       - name: Python tests
         run: pip install pytest && pytest
+
+  bundle:
+    name: Bundle package (import + tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install maturin
+        run: pip install maturin
+      - name: Build and install codeatlas
+        run: |
+          maturin build --release --interpreter python3.12 --out dist
+          pip install dist/*.whl
+      - name: Install bundle package
+        run: pip install --no-deps -e packages/codeatlas-bundle
+      - name: Bundle tests
+        run: |
+          pip install pytest
+          pytest packages/codeatlas-bundle/tests

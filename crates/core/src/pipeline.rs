@@ -143,6 +143,10 @@ pub struct AnalyzeOptions {
     pub repo_path: PathBuf,
     pub project_name: String,
     pub depth_cap: usize,
+    /// Extra directories (absolute or repo-relative) to exclude from discovery,
+    /// on top of the default output directory. Used by `codeatlas-bundle` so the
+    /// committed docs directory is not itself analyzed.
+    pub ignore_paths: Vec<PathBuf>,
 }
 
 #[derive(Debug)]
@@ -166,12 +170,20 @@ const MAX_FILE_BYTES: usize = 8 * 1024 * 1024;
 /// Run a full deterministic analysis of the repository at `repo_path`.
 pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
     let output_dir = opts.repo_path.join(".codeboarding");
-    let source_files = discover_source_files(&opts.repo_path, &output_dir);
+    let mut ignored: Vec<PathBuf> = vec![output_dir];
+    for extra in &opts.ignore_paths {
+        ignored.push(if extra.is_absolute() {
+            extra.clone()
+        } else {
+            opts.repo_path.join(extra)
+        });
+    }
+    let source_files = discover_source_files(&opts.repo_path, &ignored);
     if source_files.is_empty() {
         return Err(PipelineError::NoSourceFiles);
     }
 
-    let all_files = discover_all_files(&opts.repo_path, &output_dir);
+    let all_files = discover_all_files(&opts.repo_path, &ignored);
     let file_hashes = fingerprint(&source_files, &opts.repo_path);
 
     // Extract every file and merge into a single graph.
@@ -508,6 +520,7 @@ mod tests {
             repo_path: root.to_path_buf(),
             project_name: "demo".into(),
             depth_cap: 3,
+            ignore_paths: Vec::new(),
         };
         let result = analyze(&opts).unwrap();
         let a = &result.analysis;
@@ -545,6 +558,7 @@ mod tests {
             repo_path: tmp.path().to_path_buf(),
             project_name: "empty".into(),
             depth_cap: 3,
+            ignore_paths: Vec::new(),
         };
         assert!(matches!(analyze(&opts), Err(PipelineError::NoSourceFiles)));
     }
@@ -561,6 +575,7 @@ mod tests {
             repo_path: root.to_path_buf(),
             project_name: "big".into(),
             depth_cap: 3,
+            ignore_paths: Vec::new(),
         };
         let result = analyze(&opts).unwrap();
         assert!(result
@@ -589,6 +604,7 @@ mod tests {
             repo_path: root.to_path_buf(),
             project_name: "symlink".into(),
             depth_cap: 3,
+            ignore_paths: Vec::new(),
         };
         let result = analyze(&opts).unwrap();
         assert!(result.analysis.methods_index.contains_key("real.py|real.f"));
@@ -615,6 +631,7 @@ mod tests {
             repo_path: root.to_path_buf(),
             project_name: "hostile".into(),
             depth_cap: 3,
+            ignore_paths: Vec::new(),
         };
         // Must not panic on invalid UTF-8 or nonsensical syntax.
         let _ = analyze(&opts);

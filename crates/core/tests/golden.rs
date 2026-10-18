@@ -19,6 +19,7 @@ fn sample_repo_matches_golden_analysis() {
         repo_path: FIXTURE.into(),
         project_name: "sample_repo".into(),
         depth_cap: 3,
+        ignore_paths: Vec::new(),
     })
     .expect("fixture analysis succeeds");
 

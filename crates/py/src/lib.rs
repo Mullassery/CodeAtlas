@@ -16,11 +16,12 @@ fn version() -> &'static str {
 /// Returns a `(analysis_json, fingerprint_json, file_coverage_json)` tuple of
 /// serialized strings. The Python wrapper is responsible for writing them.
 #[pyfunction]
-#[pyo3(signature = (repo_path, project_name=None, depth_cap=3))]
+#[pyo3(signature = (repo_path, project_name=None, depth_cap=3, ignore_paths=None))]
 fn analyze_repo(
     repo_path: String,
     project_name: Option<String>,
     depth_cap: usize,
+    ignore_paths: Option<Vec<String>>,
 ) -> PyResult<(String, String, String)> {
     let repo_path = std::path::PathBuf::from(repo_path);
     let project_name = project_name
@@ -36,6 +37,11 @@ fn analyze_repo(
         repo_path,
         project_name,
         depth_cap,
+        ignore_paths: ignore_paths
+            .unwrap_or_default()
+            .into_iter()
+            .map(std::path::PathBuf::from)
+            .collect(),
     };
 
     let result = analyze(&opts).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;

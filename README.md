@@ -38,14 +38,25 @@ The deterministic core is implemented end-to-end (discovery → tree-sitter extr
 resolution → clustering → `analysis.json` → rendering). See `docs/FEATURE_PARITY.md` for what is
 implemented vs. deferred, and `docs/IMPLEMENTATION_ROADMAP.md` for the milestone plan. Documented
 limitations: tree-sitter resolution is intentionally simpler than upstream's LSP pipeline
-(`docs/audit/KNOWN_GAPS.md`), clustering is a simplified deterministic directory partition, and
-only Python is parsed so far.
+(`docs/audit/KNOWN_GAPS.md`) and clustering is a simplified deterministic directory partition.
+
+## Bundle into any repository
+
+`codeatlas-bundle` versions the architecture map inside a repository: it runs the analysis, renders
+the docs, and (optionally) commits them so the map evolves with the code. See
+[`packages/codeatlas-bundle`](packages/codeatlas-bundle).
+
+```bash
+pip install codeatlas codeatlas-bundle
+cd my-repo && codeatlas-bundle init && codeatlas-bundle build --commit
+```
 
 ## Layout
 
 - `crates/core` — pure-Rust analysis engine (no Python, no network, no LLM).
 - `crates/py` — PyO3 bindings (`codeatlas._core`).
 - `python/codeatlas` — the Python wrapper (CLI, rendering, optional LLM).
+- `packages/codeatlas-bundle` — pure-Python package that bundles the docs into other repositories.
 
 ## Development
 

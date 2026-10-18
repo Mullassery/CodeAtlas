@@ -11,7 +11,7 @@ without explicit authorization.
 - [x] `maturin build --release` produces a wheel; the wheel imports and `codeatlas
       full --local <fixture>` produces `analysis.json` end-to-end.
 - [x] `pytest tests/` passes against the installed wheel.
-- [ ] CI matrix (format, clippy, test, wheel build, pytest) verified green on PR.
+- [x] CI matrix (format, clippy, test, wheel build, pytest) verified green (runs on `main`).
 - [x] `cargo deny check` (dependency licenses/advisories) passes.
 
 ## Feature & compatibility

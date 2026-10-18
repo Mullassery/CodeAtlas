@@ -5,7 +5,7 @@
 //! suffix mapping and the `ignore` crate for gitwildmatch matching.
 
 use std::collections::BTreeSet;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 /// Programming languages CodeAtlas can analyze in the v1 tree-sitter core.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -72,11 +72,11 @@ pub struct SourceFile {
     pub language: Language,
 }
 
-/// Walk `root`, skipping ignored paths and the output dir, and classify each
-/// remaining file by its suffix. Returns files sorted by relative path for
-/// deterministic downstream ordering.
-pub fn discover_source_files(root: &Path, output_dir: &Path) -> Vec<SourceFile> {
-    walk_file_paths(root, output_dir)
+/// Walk `root`, skipping ignored paths (the output dir plus any caller-supplied
+/// directories) and classifying each remaining file by its suffix. Returns files
+/// sorted by relative path for deterministic downstream ordering.
+pub fn discover_source_files(root: &Path, ignored: &[PathBuf]) -> Vec<SourceFile> {
+    walk_file_paths(root, ignored)
         .into_iter()
         .filter_map(|rel_path| {
             let suffix = rel_path
@@ -91,11 +91,11 @@ pub fn discover_source_files(root: &Path, output_dir: &Path) -> Vec<SourceFile> 
 
 /// All non-ignored file paths (repo-relative, sorted), regardless of language.
 /// Used for file-coverage accounting.
-pub fn discover_all_files(root: &Path, output_dir: &Path) -> Vec<String> {
-    walk_file_paths(root, output_dir)
+pub fn discover_all_files(root: &Path, ignored: &[PathBuf]) -> Vec<String> {
+    walk_file_paths(root, ignored)
 }
 
-fn walk_file_paths(root: &Path, output_dir: &Path) -> Vec<String> {
+fn walk_file_paths(root: &Path, ignored: &[PathBuf]) -> Vec<String> {
     let mut files: Vec<String> = Vec::new();
 
     let walker = ignore::WalkBuilder::new(root)
@@ -115,7 +115,7 @@ fn walk_file_paths(root: &Path, output_dir: &Path) -> Vec<String> {
         if entry.path_is_symlink() {
             continue;
         }
-        if is_within(path, output_dir) {
+        if ignored.iter().any(|dir| is_within(path, dir)) {
             continue;
         }
         if has_always_ignored_component(root, path) {
@@ -185,7 +185,7 @@ mod tests {
         fs::write(root.join("node_modules/d.js"), "ignored").unwrap();
         fs::write(root.join(".codeboardingignore"), "src/c.go\n").unwrap();
 
-        let files = discover_source_files(root, &root.join(".codeboarding"));
+        let files = discover_source_files(root, &[root.join(".codeboarding")]);
         let rels: Vec<&str> = files.iter().map(|f| f.rel_path.as_str()).collect();
         assert_eq!(rels, vec!["src/a.py", "src/pkg/b.py"]);
         assert_eq!(present_languages(&files).len(), 1);

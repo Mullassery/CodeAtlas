@@ -78,6 +78,13 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 |---|---|---|---|
 | M10-1 | Golden `analysis.json` snapshot on a committed multi-language fixture | done | `crates/core/tests/golden.rs` |
 
+## Milestone M11 — Cross-repo bundling
+| ID | Task | Status | AC |
+|---|---|---|---|
+| M11-1 | `codeatlas-bundle` package (`init`/`build`/`check`, commit) | done | pytest (6 tests) |
+| M11-2 | Core `ignore_paths` so the bundle dir is excluded from discovery | done | pipeline tests |
+| M11-3 | Pilot onboarding across Mullassery repos | doing | PRs opened |
+
 ## Risks
 - LSP-level resolution fidelity (G1) — tracked in `docs/audit/KNOWN_GAPS.md`.
 - No private upstream integration fixtures (G10) — build own fixtures.

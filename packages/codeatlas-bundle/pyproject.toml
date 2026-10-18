@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "codeatlas-bundle"
+version = "0.1.0"
+description = "Bundle CodeAtlas architecture maps into any repository"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Mullassery" }]
+keywords = ["architecture", "diagrams", "static-analysis", "documentation"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python",
+  "Topic :: Software Development :: Documentation",
+]
+dependencies = ["codeatlas>=0.1.0"]
+
+[project.scripts]
+codeatlas-bundle = "codeatlas_bundle.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/codeatlas_bundle"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
