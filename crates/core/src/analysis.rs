@@ -158,6 +158,10 @@ pub struct FileCoverageReport {
     pub generated_at: String,
     pub analyzed_files: Vec<String>,
     pub not_analyzed_files: Vec<NotAnalyzedFile>,
+    /// Per-file imports: map of repo-relative path -> imported dotted module
+    /// names (deduplicated, sorted). Enables structural dependency checks.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub imports: BTreeMap<String, Vec<String>>,
     pub summary: FileCoverageSummary,
 }
 

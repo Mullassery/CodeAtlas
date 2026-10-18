@@ -191,6 +191,7 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
     let mut class_bases: Vec<(String, String)> = Vec::new();
     let mut unresolved: Vec<UnresolvedCall> = Vec::new();
     let mut analyzed_files: Vec<String> = Vec::new();
+    let mut imports_by_file: BTreeMap<String, Vec<String>> = BTreeMap::new();
 
     for file in &source_files {
         let module = extract::module_path(&file.rel_path);
@@ -206,6 +207,12 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
         };
 
         analyzed_files.push(file.rel_path.clone());
+        for import in &extracted.imports {
+            imports_by_file
+                .entry(file.rel_path.clone())
+                .or_default()
+                .push(import.module.clone());
+        }
         for mut node in extracted.nodes {
             node.file_path = file.rel_path.clone();
             graph.nodes.push(node);
@@ -214,6 +221,11 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
         graph.reference_edges.extend(extracted.reference_edges);
         class_bases.extend(extracted.class_bases);
         unresolved.extend(extracted.unresolved_calls);
+    }
+
+    for modules in imports_by_file.values_mut() {
+        modules.sort();
+        modules.dedup();
     }
 
     normalize_nodes(&mut graph.nodes);
@@ -319,6 +331,7 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
         generated_at: generated_at.clone(),
         analyzed_files: analyzed_files.clone(),
         not_analyzed_files,
+        imports: imports_by_file,
         summary: summary.clone(),
     };
 
@@ -549,6 +562,34 @@ mod tests {
         // Fingerprint sidecar covers both files.
         assert!(result.fingerprint.contains_key("app/main.py"));
         assert!(result.fingerprint.contains_key("core/engine.py"));
+    }
+
+    #[test]
+    fn exposes_per_file_imports() {
+        let tmp = TempDir::new();
+        let root = tmp.path();
+        fs::write(
+            root.join("app.py"),
+            "import os\nimport json\nfrom pkg.sub import thing\n\ndef f():\n    return 1\n",
+        )
+        .unwrap();
+
+        let opts = AnalyzeOptions {
+            repo_path: root.to_path_buf(),
+            project_name: "imports".into(),
+            depth_cap: 3,
+            ignore_paths: Vec::new(),
+        };
+        let result = analyze(&opts).unwrap();
+        let imports = result
+            .file_coverage
+            .imports
+            .get("app.py")
+            .expect("imports recorded for analyzed file");
+        assert_eq!(
+            imports,
+            &vec!["json".to_string(), "os".to_string(), "pkg.sub".to_string()]
+        );
     }
 
     #[test]
