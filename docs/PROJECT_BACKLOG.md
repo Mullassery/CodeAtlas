@@ -45,7 +45,7 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | M5-1 | Python wrapper `codeatlas full --local` → analysis.json + fingerprint.json | done | fixture run asserts output |
 | M5-2 | Deterministic names without LLM | done | no-provider run succeeds |
 | M5-3 | Cross-file call resolution (unique-name heuristic) + component relations | done | pipeline test |
-| M5-4 | `file_coverage.json` artifact | todo | separate coverage file |
+| M5-4 | `file_coverage.json` artifact | done | coverage sidecar + tests |
 
 ## Milestone M6 — Rendering
 | ID | Task | Status | AC |
@@ -62,8 +62,16 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 ## Milestone M8 — Hardening
 | ID | Task | Status | AC |
 |---|---|---|---|
-| M8-1 | Security: symlink/path traversal, size limits, no exec | todo | security tests |
-| M8-2 | Error-path tests, benchmarks | todo | green suite, clippy clean |
+| M8-1 | Security: symlink/path traversal, size limits, no exec | done | symlink/size/hostile-content tests |
+| M8-2 | Error-path tests, benchmarks | doing | green suite, clippy clean |
+
+## Milestone M9 — Additional languages
+| ID | Task | Status | AC |
+|---|---|---|---|
+| M9-1 | Rust tree-sitter extractor | done | unit tests + self-dogfood |
+| M9-2 | Go extractor | todo | |
+| M9-3 | JavaScript/TypeScript extractor | todo | |
+| M9-4 | Java extractor | todo | |
 
 ## Risks
 - LSP-level resolution fidelity (G1) — tracked in `docs/audit/KNOWN_GAPS.md`.
