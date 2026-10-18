@@ -1,0 +1,58 @@
+name: CodeAtlas architecture diff
+description: Analyze before/after checkouts and comment the architecture changes in the job summary.
+inputs:
+  before-dir:
+    description: Path to the base checkout (e.g. a worktree of the base branch).
+    required: true
+  after-dir:
+    description: Path to the head checkout.
+    required: true
+  project-name:
+    description: Project name used in analysis metadata.
+    required: false
+    default: pull-request
+  fail-on-change:
+    description: Fail the step when any component, relation, or method changed.
+    required: false
+    default: "false"
+  version:
+    description: codeatlas-rs version to install from PyPI.
+    required: false
+    default: "0.5.1"
+  python-version:
+    description: Python version for the action.
+    required: false
+    default: "3.12"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install CodeAtlas
+      shell: bash
+      run: python -m pip install "codeatlas-rs==${{ inputs.version }}"
+
+    - name: Analyze base and head
+      shell: bash
+      run: |
+        set -euo pipefail
+        codeatlas full --local "${{ inputs.before-dir }}" \
+          --project-name "${{ inputs.project-name }}" \
+          --output-dir "$RUNNER_TEMP/codeatlas-before"
+        codeatlas full --local "${{ inputs.after-dir }}" \
+          --project-name "${{ inputs.project-name }}" \
+          --output-dir "$RUNNER_TEMP/codeatlas-after"
+
+    - name: Diff architecture maps
+      shell: bash
+      run: |
+        set -euo pipefail
+        ARGS=(diff "$RUNNER_TEMP/codeatlas-before/analysis.json" \
+                   "$RUNNER_TEMP/codeatlas-after/analysis.json" --format md)
+        if [ "${{ inputs.fail-on-change }}" = "true" ]; then
+          ARGS+=(--fail-on-change)
+        fi
+        codeatlas "${ARGS[@]}" | tee -a "$GITHUB_STEP_SUMMARY"

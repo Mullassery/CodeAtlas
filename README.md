@@ -30,6 +30,12 @@ codeatlas diff old/.codeatlas/analysis.json new/.codeatlas/analysis.json --fail-
 Output is written to `<repo>/.codeatlas/`. Configure an optional provider via
 `OPENAI_API_KEY` (+ `OPENAI_BASE_URL`, `AGENT_MODEL`); see `codeatlas_rs.llm`.
 
+## PR architecture diff
+
+`codeatlas diff` compares two architecture maps, and
+`.github/actions/architecture-diff` runs it as a PR check. See
+[`docs/PR_DIFF.md`](docs/PR_DIFF.md).
+
 ## Audit findings
 
 The 2026-10-19 implementation audit — including the Java extractor work,
