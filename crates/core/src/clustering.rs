@@ -51,7 +51,23 @@ pub fn cluster(
     }
 
     assign_component_ids(&mut components, "");
+    distinguish_sibling_names(&mut components);
     components
+}
+
+/// Rename colliding sibling component names to `"{name} ({component_id})"`,
+/// mirroring upstream `distinguish_expanded_component_names`.
+fn distinguish_sibling_names(components: &mut [Component]) {
+    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+    for component in components.iter() {
+        *counts.entry(component.name.clone()).or_insert(0) += 1;
+    }
+    for component in components.iter_mut() {
+        if counts.get(&component.name).copied().unwrap_or(0) > 1 {
+            component.name = format!("{} ({})", component.name, component.component_id);
+        }
+        distinguish_sibling_names(&mut component.components);
+    }
 }
 
 fn insert(dir: &mut Dir, full_path: &str, parts: &[&str]) {
@@ -77,8 +93,10 @@ fn build_scope(
     cap: usize,
     methods: &BTreeMap<String, Vec<String>>,
 ) -> Vec<Component> {
-    // Absorb a chain of empty single-child directories.
-    if dir.files.is_empty() && dir.dirs.len() == 1 {
+    // Absorb a chain of empty single-child directories, but only below the top
+    // level so meaningful top-level boundaries (e.g. `python/` vs `crates/`) are
+    // preserved.
+    if depth > 1 && dir.files.is_empty() && dir.dirs.len() == 1 {
         let (sub_name, sub) = dir.dirs.iter().next().unwrap();
         return build_scope(sub, sub_name, depth, cap, methods);
     }
@@ -171,14 +189,20 @@ mod tests {
     }
 
     #[test]
-    fn absorbs_single_child_directory_chains() {
+    fn absorbs_single_child_directory_chains_below_top() {
         let files = vec!["a/b/c/d.py".to_string()];
         let m = methods(&[("a/b/c/d.py", &["a.b.c.d.foo"])]);
         let components = cluster(&files, &m, 5, "demo");
-        // a -> b -> c chain with no sibling files collapses to "c".
+        // Top-level "a" is preserved; the empty single-child directory "b" is
+        // absorbed so "c" (which owns d.py) nests directly under "a".
         assert_eq!(components.len(), 1);
-        assert_eq!(components[0].name, "c");
-        assert_eq!(components[0].components.len(), 0);
+        assert_eq!(components[0].name, "a");
+        assert_eq!(components[0].components.len(), 1);
+        assert_eq!(components[0].components[0].name, "c");
+        assert_eq!(
+            components[0].components[0].file_methods[0].file_path,
+            "a/b/c/d.py"
+        );
     }
 
     #[test]

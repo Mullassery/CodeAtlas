@@ -21,8 +21,122 @@ use crate::model::{CallGraph, Edge, Node, NodeType, ReferenceEdge, ReferenceEdge
 pub type FileIndex = BTreeMap<String, FileEntry>;
 /// Map of `"{file}|{qname}"` -> method entry.
 pub type MethodIndex = BTreeMap<String, MethodIndexEntry>;
-/// Call edges grouped by (source component, target component).
-type GroupedEdges = BTreeMap<(String, String), Vec<(String, String, usize, usize)>>;
+/// A single call-site edge tuple: (source key, target key, line, column).
+type ScopedEdge = (String, String, usize, usize);
+/// Group call sites by (lca id, source direct-child id, target direct-child id).
+type GroupedEdges = BTreeMap<(String, String, String), Vec<ScopedEdge>>;
+
+/// Build per-scope relations: for each cross-component call edge, place the
+/// relation at the lowest component that is an ancestor of both endpoints, with
+/// endpoints named by the direct children under that ancestor. Returns a map
+/// from the LCA component id (`""` for the root scope) to its relations.
+fn build_relations(
+    graph: &CallGraph,
+    qname_to_component: &BTreeMap<String, String>,
+    id_to_name: &BTreeMap<String, String>,
+    qname_to_key: &BTreeMap<String, String>,
+) -> BTreeMap<String, Vec<Relation>> {
+    // (lca_id, src_direct_id, dst_direct_id) -> edge (source, target, line, col).
+    let mut grouped: GroupedEdges = BTreeMap::new();
+
+    for edge in &graph.edges {
+        let Some(src_comp) = qname_to_component.get(&edge.source) else {
+            continue;
+        };
+        let Some(dst_comp) = qname_to_component.get(&edge.destination) else {
+            continue;
+        };
+        if src_comp == dst_comp {
+            continue;
+        }
+
+        let lca = lca_id(src_comp, dst_comp);
+        let lca_depth = if lca.is_empty() { 0 } else { id_depth(&lca) };
+        let src_at = truncate_id(src_comp, lca_depth + 1);
+        let dst_at = truncate_id(dst_comp, lca_depth + 1);
+        if src_at == dst_at {
+            continue;
+        }
+
+        for site in &edge.call_sites {
+            grouped
+                .entry((lca.clone(), src_at.clone(), dst_at.clone()))
+                .or_default()
+                .push((
+                    edge.source.clone(),
+                    edge.destination.clone(),
+                    site.line,
+                    site.column,
+                ));
+        }
+    }
+
+    let mut by_scope: BTreeMap<String, Vec<Relation>> = BTreeMap::new();
+    for ((lca, src_id, dst_id), edges) in grouped {
+        let all_edges = edges
+            .into_iter()
+            .map(|(source, target, line, column)| RelationEdge {
+                source: qname_to_key.get(&source).cloned().unwrap_or(source),
+                target: qname_to_key.get(&target).cloned().unwrap_or(target),
+                call_sites: vec![RelationCallSite { line, column }],
+                description: String::new(),
+            })
+            .collect();
+
+        by_scope.entry(lca).or_default().push(Relation {
+            relation: "calls".to_string(),
+            src_name: id_to_name.get(&src_id).cloned().unwrap_or(src_id.clone()),
+            dst_name: id_to_name.get(&dst_id).cloned().unwrap_or(dst_id.clone()),
+            evidence: String::new(),
+            key_edges: vec![],
+            src_id,
+            dst_id,
+            is_static: true,
+            all_edges,
+        });
+    }
+
+    for relations in by_scope.values_mut() {
+        relations.sort_by(|a, b| {
+            (a.src_id.as_str(), a.dst_id.as_str()).cmp(&(b.src_id.as_str(), b.dst_id.as_str()))
+        });
+    }
+
+    by_scope
+}
+
+/// Assign each component's `components_relations` from the scoped map.
+fn assign_relations_to_components(
+    components: &mut [Component],
+    relations_by_scope: &BTreeMap<String, Vec<Relation>>,
+) {
+    for component in components.iter_mut() {
+        if let Some(relations) = relations_by_scope.get(&component.component_id) {
+            component.components_relations = relations.clone();
+        }
+        assign_relations_to_components(&mut component.components, relations_by_scope);
+    }
+}
+
+fn id_depth(id: &str) -> usize {
+    id.split('.').count()
+}
+
+/// Longest common dotted prefix of two hierarchical component ids.
+fn lca_id(a: &str, b: &str) -> String {
+    let a_parts: Vec<&str> = a.split('.').collect();
+    let b_parts: Vec<&str> = b.split('.').collect();
+    let n = a_parts.len().min(b_parts.len());
+    let mut i = 0;
+    while i < n && a_parts[i] == b_parts[i] {
+        i += 1;
+    }
+    a_parts[..i].join(".")
+}
+
+fn truncate_id(id: &str, segments: usize) -> String {
+    id.split('.').take(segments).collect::<Vec<_>>().join(".")
+}
 
 #[derive(Debug, Clone)]
 pub struct AnalyzeOptions {
@@ -64,6 +178,7 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
     let mut graph = CallGraph::default();
     let mut class_bases: Vec<(String, String)> = Vec::new();
     let mut unresolved: Vec<UnresolvedCall> = Vec::new();
+    let mut analyzed_files: Vec<String> = Vec::new();
 
     for file in &source_files {
         let module = extract::module_path(&file.rel_path);
@@ -72,9 +187,13 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
             continue;
         }
         let source = String::from_utf8_lossy(&bytes);
-        let extracted = extract::extract(file.language, &module, &source)
-            .map_err(|e| PipelineError::Extract(file.rel_path.clone(), e))?;
+        let extracted = match extract::extract(file.language, &module, &source) {
+            Ok(extracted) => extracted,
+            Err(extract::Error::Unsupported(_)) => continue,
+            Err(e) => return Err(PipelineError::Extract(file.rel_path.clone(), e)),
+        };
 
+        analyzed_files.push(file.rel_path.clone());
         for mut node in extracted.nodes {
             node.file_path = file.rel_path.clone();
             graph.nodes.push(node);
@@ -126,8 +245,11 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
         qnames.dedup();
     }
 
-    let file_paths: Vec<String> = source_files.iter().map(|f| f.rel_path.clone()).collect();
-    let components = cluster(
+    // Cluster over the full directory tree so real directory boundaries (e.g.
+    // a Cargo.toml distinguishing `crates/core` from `crates/py`) are preserved;
+    // method membership is attached only for analyzed files.
+    let file_paths: Vec<String> = all_files.clone();
+    let mut components = cluster(
         &file_paths,
         &methods_by_file,
         opts.depth_cap,
@@ -141,32 +263,49 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
         .collect();
     let qname_to_component = build_node_to_component(&components);
     let id_to_name = index_component_names(&components);
-    let relations = build_relations(&graph, &qname_to_component, &id_to_name, &qname_to_key);
+    let relations_by_scope =
+        build_relations(&graph, &qname_to_component, &id_to_name, &qname_to_key);
+    let root_relations = relations_by_scope.get("").cloned().unwrap_or_default();
+    assign_relations_to_components(&mut components, &relations_by_scope);
 
     let depth_level = max_depth(&components);
-    let summary = FileCoverageSummary {
-        total_files: all_files.len(),
-        analyzed: source_files.len(),
-        not_analyzed: all_files.len().saturating_sub(source_files.len()),
-        not_analyzed_by_reason: BTreeMap::new(),
-    };
-    let generated_at = crate::analysis::utc_now_iso8601();
-
-    let analyzed_files: Vec<String> = source_files.iter().map(|f| f.rel_path.clone()).collect();
     let analyzed_set: std::collections::BTreeSet<&str> =
         analyzed_files.iter().map(|s| s.as_str()).collect();
+    let source_set: std::collections::BTreeSet<&str> =
+        source_files.iter().map(|f| f.rel_path.as_str()).collect();
+
+    let mut not_analyzed_by_reason: BTreeMap<String, usize> = BTreeMap::new();
     let not_analyzed_files: Vec<NotAnalyzedFile> = all_files
         .iter()
         .filter(|f| !analyzed_set.contains(f.as_str()))
-        .map(|f| NotAnalyzedFile {
-            path: f.clone(),
-            reason: "other".to_string(),
+        .map(|f| {
+            let reason = if source_set.contains(f.as_str()) {
+                "unsupported_language"
+            } else {
+                "other"
+            };
+            *not_analyzed_by_reason
+                .entry(reason.to_string())
+                .or_insert(0) += 1;
+            NotAnalyzedFile {
+                path: f.clone(),
+                reason: reason.to_string(),
+            }
         })
         .collect();
+
+    let summary = FileCoverageSummary {
+        total_files: all_files.len(),
+        analyzed: analyzed_files.len(),
+        not_analyzed: all_files.len().saturating_sub(analyzed_files.len()),
+        not_analyzed_by_reason,
+    };
+    let generated_at = crate::analysis::utc_now_iso8601();
+
     let file_coverage = FileCoverageReport {
         version: 1,
         generated_at: generated_at.clone(),
-        analyzed_files,
+        analyzed_files: analyzed_files.clone(),
         not_analyzed_files,
         summary: summary.clone(),
     };
@@ -185,7 +324,7 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
         files,
         methods_index,
         components,
-        components_relations: relations,
+        components_relations: root_relations,
     };
 
     Ok(AnalyzeResult {
@@ -333,67 +472,6 @@ fn index_component_names(components: &[Component]) -> BTreeMap<String, String> {
         stack.extend(component.components.iter());
     }
     map
-}
-
-fn build_relations(
-    graph: &CallGraph,
-    qname_to_component: &BTreeMap<String, String>,
-    id_to_name: &BTreeMap<String, String>,
-    qname_to_key: &BTreeMap<String, String>,
-) -> Vec<Relation> {
-    let mut grouped: GroupedEdges = BTreeMap::new();
-    for edge in &graph.edges {
-        let Some(src_comp) = qname_to_component.get(&edge.source) else {
-            continue;
-        };
-        let Some(dst_comp) = qname_to_component.get(&edge.destination) else {
-            continue;
-        };
-        if src_comp == dst_comp {
-            continue;
-        }
-        for site in &edge.call_sites {
-            grouped
-                .entry((src_comp.clone(), dst_comp.clone()))
-                .or_default()
-                .push((
-                    edge.source.clone(),
-                    edge.destination.clone(),
-                    site.line,
-                    site.column,
-                ));
-        }
-    }
-
-    let mut relations: Vec<Relation> = Vec::new();
-    for ((src_id, dst_id), edges) in grouped {
-        let all_edges = edges
-            .into_iter()
-            .map(|(source, target, line, column)| RelationEdge {
-                source: qname_to_key.get(&source).cloned().unwrap_or(source),
-                target: qname_to_key.get(&target).cloned().unwrap_or(target),
-                call_sites: vec![RelationCallSite { line, column }],
-                description: String::new(),
-            })
-            .collect();
-
-        relations.push(Relation {
-            relation: "calls".to_string(),
-            src_name: id_to_name.get(&src_id).cloned().unwrap_or_default(),
-            dst_name: id_to_name.get(&dst_id).cloned().unwrap_or_default(),
-            evidence: String::new(),
-            key_edges: vec![],
-            src_id,
-            dst_id,
-            is_static: true,
-            all_edges,
-        });
-    }
-
-    relations.sort_by(|a, b| {
-        (a.src_id.as_str(), a.dst_id.as_str()).cmp(&(b.src_id.as_str(), b.dst_id.as_str()))
-    });
-    relations
 }
 
 fn max_depth(components: &[Component]) -> usize {

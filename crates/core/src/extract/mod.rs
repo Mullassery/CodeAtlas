@@ -5,6 +5,7 @@
 //! (ADR-0002). v1 ships a single tree-sitter implementation per language.
 
 pub mod python;
+pub mod rust;
 
 use crate::discovery::Language;
 use crate::model::{Edge, Node, ReferenceEdge};
@@ -54,6 +55,7 @@ pub enum Error {
 pub fn extract(language: Language, module: &str, source: &str) -> Result<ExtractedFile, Error> {
     match language {
         Language::Python => python::extract(module, source),
+        Language::Rust => rust::extract(module, source),
         other => Err(Error::Unsupported(other)),
     }
 }

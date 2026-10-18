@@ -17,6 +17,7 @@ sha2 = "0.10"
 ignore = "0.4"
 tree-sitter = "0.25"
 tree-sitter-python = "0.25"
+tree-sitter-rust = "0.24"
 pyo3 = { version = "0.23", features = ["abi3-py39"] }
 
 [profile.release]
