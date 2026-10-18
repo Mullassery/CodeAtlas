@@ -9,7 +9,7 @@ the owner). Two packaging strategies were considered for the Rust core:
 
 1. **Standalone binary + subprocess** — Python shells out to a `codeatlas` binary over JSON/file
    contracts.
-2. **PyO3 + maturin native extension** — Rust compiled into `codeatlas._core`, imported in-process.
+2. **PyO3 + maturin native extension** — Rust compiled into `codeatlas_rs._core`, imported in-process.
 
 ## Decision
 Use **PyO3 + maturin** (option 2), confirmed by the owner.

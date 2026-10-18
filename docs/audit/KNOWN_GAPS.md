@@ -20,12 +20,12 @@ is produced by the wrapper only when a provider is configured. This widens usabi
 from upstream's "fail rather than mislabel" policy — documented as a deliberate, verifiable difference.
 
 ## G3 — No committed golden `analysis.json` diff against a live upstream run
-The upstream `.codeboarding/analysis.json` (1.8 MB) shows the real schema, but we have not run a
+The upstream `.codeatlas/analysis.json` (1.8 MB) shows the real schema, but we have not run a
 byte-level comparison of CodeAtlas output against a fresh upstream run. `[ASSUMPTION]` until a
 fixture repo is analyzed by both tools.
 
 ## G4 — Tool/language-server installer deferred
-`codeboarding-setup` (nodeenv, pinned Node 20, JDTLS, kotlin-lsp, csharp-ls, etc.) is out of v1 scope.
+The language-server tool installer (nodeenv, pinned Node 20, JDTLS, kotlin-lsp, csharp-ls, etc.) is out of v1 scope.
 Users needing LSP-based analysis must install servers themselves (documented later). Kotlin defered
 beyond v1 (large, non-standard license).
 
@@ -52,7 +52,6 @@ Even upstream's deterministic grouper can yield LLM-dependent names; the *member
 tree + file/method assignment) is deterministic, but `name`/`description`/`relation` wording are not.
 CodeAtlas conveys the same split and will add golden tests only for the deterministic surface.
 
-## G10 — Blocked: exact upstream test-fixture access
-The upstream unit tests are in-repo (128 files), but the **integration suite lives in the private
-`CodeBoarding/CodeBoarding-tests` repo** and is not accessible here. CodeAtlas builds its own fixtures
-and cannot reproduce upstream's private integration assertions.
+## G10 — Blocked: private integration-fixture access
+The reference engine's integration suite fixtures are private and not accessible here. CodeAtlas
+builds its own fixtures and cannot reproduce those private integration assertions.

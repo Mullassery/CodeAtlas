@@ -13,7 +13,7 @@ A Cargo workspace with exactly two crates in v1:
 
 1. `codeatlas-core` — pure Rust library (models, analysis, clustering, serialization). No `pyo3`,
    no network.
-2. `codeatlas-py` — `cdylib` exposing `codeatlas._core`, depending only on `codeatlas-core` + `pyo3`.
+2. `codeatlas-py` — `cdylib` exposing `codeatlas_rs._core`, depending only on `codeatlas-core` + `pyo3`.
 
 A separate `python/codeatlas` package (not a Cargo crate) provides the CLI, config, rendering, and
 optional LLM provider facade.

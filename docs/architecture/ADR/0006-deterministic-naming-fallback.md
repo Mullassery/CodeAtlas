@@ -4,7 +4,7 @@
 - **Date:** 2026-10-17
 
 ## Context
-Upstream CodeBoarding aborts a full run when no LLM provider is configured — it refuses to ship
+The reference analysis engine aborts a full run when no LLM provider is configured — it refuses to ship
 folder-named components because they "look like a finished diagram". The v1 target is the
 **deterministic analysis core first** (owner decision), which must be usable without network/keys.
 

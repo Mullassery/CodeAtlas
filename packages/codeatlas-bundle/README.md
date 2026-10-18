@@ -11,7 +11,7 @@ CodeAtlas supports (Python, Rust, Go, JavaScript/TypeScript).
 ## Install
 
 ```bash
-pip install codeatlas codeatlas-bundle
+pip install codeatlas-rs codeatlas-bundle
 ```
 
 ## Connect a repository
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install codeatlas codeatlas-bundle
+      - run: pip install codeatlas-rs codeatlas-bundle
       - run: git config user.name "codeatlas" && git config user.email "codeatlas@users.noreply.github.com"
       - run: codeatlas-bundle build --commit
       - run: git push

@@ -1,4 +1,4 @@
-import codeatlas.llm as llm
+import codeatlas_rs.llm as llm
 
 
 def test_resolve_config_openai(monkeypatch):

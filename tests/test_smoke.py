@@ -1,6 +1,6 @@
 import json
 
-import codeatlas
+import codeatlas_rs
 
 
 def _fixture(tmp_path):
@@ -13,7 +13,7 @@ def _fixture(tmp_path):
 
 def test_analyze_smoke(tmp_path):
     _fixture(tmp_path)
-    analysis_json, fingerprint_json, file_coverage_json = codeatlas.analyze(
+    analysis_json, fingerprint_json, file_coverage_json = codeatlas_rs.analyze(
         str(tmp_path), project_name="demo"
     )
 
@@ -43,8 +43,8 @@ def test_analyze_smoke(tmp_path):
 
 
 def test_version():
-    assert isinstance(codeatlas.__version__, str)
-    assert codeatlas.__version__
+    assert isinstance(codeatlas_rs.__version__, str)
+    assert codeatlas_rs.__version__
 
 
 def test_analyze_javascript_typescript(tmp_path):
@@ -63,7 +63,7 @@ def test_analyze_javascript_typescript(tmp_path):
         "function boot() {\n  const s = new Service();\n  return s.run();\n}\n"
     )
 
-    analysis_json, _, file_coverage_json = codeatlas.analyze(
+    analysis_json, _, file_coverage_json = codeatlas_rs.analyze(
         str(tmp_path), project_name="web"
     )
     analysis = json.loads(analysis_json)

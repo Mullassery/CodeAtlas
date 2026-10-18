@@ -13,12 +13,12 @@ import os
 import sys
 from pathlib import Path
 
-from codeatlas import __version__, analyze
+from codeatlas_rs import __version__, analyze
 
 ANALYSIS_FILENAME = "analysis.json"
 FINGERPRINT_FILENAME = "fingerprint.json"
 FILE_COVERAGE_FILENAME = "file_coverage.json"
-OUTPUT_DIR_NAME = ".codeboarding"
+OUTPUT_DIR_NAME = ".codeatlas"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -86,7 +86,7 @@ def run_full(args: argparse.Namespace) -> None:
 
 
 def _maybe_enrich(analysis: dict) -> None:
-    from codeatlas.llm import LLMError, enrich, resolve_config
+    from codeatlas_rs.llm import LLMError, enrich, resolve_config
 
     if resolve_config() is None:
         return
@@ -121,7 +121,7 @@ def render_main(
 
     output_dir = Path(_output_dir) if _output_dir else analysis.parent
 
-    from codeatlas.render import render
+    from codeatlas_rs.render import render
 
     written = render(_format, analysis, output_dir)
     for path in written:

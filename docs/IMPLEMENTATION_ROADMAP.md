@@ -5,7 +5,7 @@ green. Status is tracked in `docs/PROJECT_BACKLOG.md` during execution.
 
 ## M0 — Project skeleton (Phase 3)
 - Monorepo layout: Cargo workspace (`codeatlas-core` + `codeatlas-python`), Python package.
-- `maturin` build producing a `codeatlas._core` extension with a trivial `version()` function.
+- `maturin` build producing a `codeatlas_rs._core` extension with a trivial `version()` function.
 - CI (format, clippy, `cargo test`, `maturin build`, `pytest`).
 - *Acceptance:* `cargo build` and `maturin develop` succeed; extension imports.
 
@@ -16,7 +16,7 @@ green. Status is tracked in `docs/PROJECT_BACKLOG.md` during execution.
 - *Acceptance:* round-trip/golden tests; a hand-built graph serializes to valid schema.
 
 ## M2 — Discovery + ignore + fingerprint (R1)
-- Suffix → language map, file walker, gitwildmatch ignore, `.codeboardingignore`; `sha2` per-file
+- Suffix → language map, file walker, gitwildmatch ignore, `.codeatlasignore`; `sha2` per-file
   hashes + tree hash; `fingerprint.json`, `file_coverage.json` stubs.
 - *Acceptance:* discovery/ignore fixtures; deterministic hash tests.
 
@@ -29,7 +29,7 @@ green. Status is tracked in `docs/PROJECT_BACKLOG.md` during execution.
 - *Acceptance:* partition equals reference on fixtures; replay == draft.
 
 ## M5 — End-to-end vertical slice (R5)
-- Python wrapper: `codeatlas --local <repo>` → full pipeline → `.codeboarding/analysis.json`
+- Python wrapper: `codeatlas --local <repo>` → full pipeline → `.codeatlas/analysis.json`
   (+ fingerprint + coverage); deterministic names when no provider.
 - *Acceptance:* run on a committed fixture repo; asserts on output.
 

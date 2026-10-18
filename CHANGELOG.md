@@ -8,16 +8,16 @@ All notable changes to CodeAtlas are documented here. The format follows
 
 ### Added
 - Deterministic analysis core in Rust: repository discovery (gitignore +
-  `.codeboardingignore`), content fingerprinting, and tree-sitter extraction
+  `.codeatlasignore`), content fingerprinting, and tree-sitter extraction
   for **Python**, **Rust**, **Go**, and **JavaScript/TypeScript** (symbols,
   qualified names, calls, imports, class/receiver hierarchies, cross-file
   unique-name call resolution). `.ts`/`.tsx` are auto-disambiguated by re-parsing
   with whichever grammar produces fewer parse errors.
 - Deterministic directory-based component clustering with hierarchical component
   ids and per-scope (lowest-common-ancestor) relations.
-- Upstream-compatible `analysis.json` output plus `fingerprint.json` and
+- Schema-compatible `analysis.json` output plus `fingerprint.json` and
   `file_coverage.json` sidecars.
-- Python package (`codeatlas`) distributed via maturin/PyPI, with `codeatlas`
+- Python package (`codeatlas-rs`, import `codeatlas_rs`) distributed via maturin/PyPI, with `codeatlas`
   and `codeatlas-render` CLIs.
 - Renderers for Markdown + Mermaid, HTML (Cytoscape.js), MDX, and
   reStructuredText, with a render manifest that reconciles stale files and
@@ -36,7 +36,7 @@ All notable changes to CodeAtlas are documented here. The format follows
   than flattened to the root scope.
 
 ### Known limitations
-- Tree-sitter resolution is intentionally simpler than upstream's LSP pipeline;
+- Tree-sitter resolution is intentionally simpler than an LSP pipeline;
   see `docs/audit/KNOWN_GAPS.md`.
 - Clustering is a simplified deterministic directory partition (full
   affinity/kinship + TreeSpec replay deferred to incremental support).

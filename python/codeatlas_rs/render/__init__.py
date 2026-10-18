@@ -2,7 +2,7 @@
 
 Renders the root overview plus one document per expanded component into
 Markdown (Mermaid), HTML (Cytoscape.js), MDX, or reStructuredText. A render
-manifest (`.codeboarding-render.json`) tracks owned files so stale docs are
+manifest (`.codeatlas-render.json`) tracks owned files so stale docs are
 removed and unowned files are never overwritten.
 """
 
@@ -152,24 +152,24 @@ def _write_manifest(output_dir: Path, output_format: str, names: list[str]) -> N
 
 # Imported lazily to avoid import cycles between render submodules.
 def _render_markdown(doc: dict[str, Any], repo_name: str) -> str:
-    from codeatlas.render.markdown import generate_markdown
+    from codeatlas_rs.render.markdown import generate_markdown
 
     return generate_markdown(doc)
 
 
 def _render_html(doc: dict[str, Any], repo_name: str) -> str:
-    from codeatlas.render.html import generate_html
+    from codeatlas_rs.render.html import generate_html
 
     return generate_html(doc)
 
 
 def _render_mdx(doc: dict[str, Any], repo_name: str) -> str:
-    from codeatlas.render.mdx import generate_mdx
+    from codeatlas_rs.render.mdx import generate_mdx
 
     return generate_mdx(doc)
 
 
 def _render_rst(doc: dict[str, Any], repo_name: str) -> str:
-    from codeatlas.render.rst import generate_rst
+    from codeatlas_rs.render.rst import generate_rst
 
     return generate_rst(doc)

@@ -1,6 +1,6 @@
 """CodeAtlas: Rust-native architecture maps for codebases."""
 
-from codeatlas import _core
+from codeatlas_rs import _core
 
 __all__ = ["__version__", "analyze", "_core"]
 

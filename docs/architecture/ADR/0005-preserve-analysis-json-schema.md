@@ -4,7 +4,7 @@
 - **Date:** 2026-10-17
 
 ## Context
-Upstream CodeBoarding's primary artifact is `.codeboarding/analysis.json`, consumed by its web
+The reference analysis engine's primary artifact is `.codeatlas/analysis.json`, consumed by a web
 viewer, editor extension, and documentation tooling. CodeAtlas must decide whether to preserve,
 version, or replace this schema.
 
@@ -25,4 +25,4 @@ file_coverage_summary, tree_spec}`, `files`, `methods_index`, `components` (nest
 - The Rust `serde` models must match upstream Pydantic serialization rules (`exclude_none`; relations
   dumped without recursive `exclude_none`; `key_entities` with `reference_file` repo-relative).
 - If upstream evolves the schema, CodeAtlas tracks released versions and documents divergence.
-- The CLI/program is still named `codeatlas` (independent tool; not an imposter for `codeboarding`).
+- The CLI/program is named `codeatlas` and is an independent, standalone tool.

@@ -1,6 +1,6 @@
 # Feature Parity
 
-Disposition of every upstream feature from `docs/audit/FEATURE_INVENTORY.md`:
+Disposition of every tracked feature:
 **v1** implement in the initial release, **later** implement post-v1, **exclude** with justification,
 **blocked** pending investigation.
 
@@ -44,7 +44,7 @@ Disposition of every upstream feature from `docs/audit/FEATURE_INVENTORY.md`:
 |---|---|
 | CLI-10 remote clone + `--upload` | hosted-artifact coupling, obsolete naming |
 | PostHog telemetry (default-on) | privacy; CodeAtlas ships no telemetry |
-| `codeboarding-setup`/nodeenv/tool installer | non-essential to core value; document manual setup |
+| Language-server/tool installer | non-essential to core value; document manual setup |
 | C++ analysis | upstream declared-only (no adapter) |
 | Web platform / VS Code / GitHub Action | external products, out of repo scope |
 | Pickle cache (`static_analysis.pkl`) | unpickle = code-execution risk; use typed serialization instead |

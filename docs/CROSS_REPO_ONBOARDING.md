@@ -6,7 +6,7 @@ alongside its code. This page tracks the pilot rollout across the
 
 ## How a repo connects
 
-1. `pip install codeatlas codeatlas-bundle`
+1. `pip install codeatlas-rs codeatlas-bundle`
 2. `codeatlas-bundle init` — writes `codeatlas.json`.
 3. `codeatlas-bundle build --commit` — generates and commits `docs/codeatlas/`.
 4. Add the `.github/workflows/codeatlas.yml` workflow so the map refreshes on

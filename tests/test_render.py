@@ -1,6 +1,6 @@
 import json
 
-from codeatlas.render import render
+from codeatlas_rs.render import render
 
 
 def _analysis(tmp_path):
@@ -10,9 +10,9 @@ def _analysis(tmp_path):
     (tmp_path / "app" / "util.py").write_text("def helper():\n    return 42\n")
     (tmp_path / "core" / "engine.py").write_text("def start():\n    return run()\n")
 
-    import codeatlas
+    import codeatlas_rs
 
-    analysis_json, _, _ = codeatlas.analyze(str(tmp_path), project_name="demo")
+    analysis_json, _, _ = codeatlas_rs.analyze(str(tmp_path), project_name="demo")
     analysis_path = tmp_path / "analysis.json"
     analysis_path.write_text(analysis_json)
     return analysis_path, json.loads(analysis_json)

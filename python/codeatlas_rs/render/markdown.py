@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from codeatlas.render import sanitize
+from codeatlas_rs.render import sanitize
 
 
 def mermaid(components: list[dict[str, Any]], relations: list[dict[str, Any]]) -> str:

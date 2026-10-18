@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from codeatlas.render.markdown import mermaid
+from codeatlas_rs.render.markdown import mermaid
 
 
 def generate_mdx(doc: dict[str, Any]) -> str:

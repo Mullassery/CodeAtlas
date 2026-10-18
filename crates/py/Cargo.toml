@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
-description = "PyO3 bindings for the CodeAtlas core (codeatlas._core)"
+description = "PyO3 bindings for the CodeAtlas core (codeatlas_rs._core)"
 
 [lib]
 name = "_core"

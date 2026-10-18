@@ -5,13 +5,10 @@ relationships with deterministic static analysis (tree-sitter), groups code into
 documents the architecture as `analysis.json`, Markdown/Mermaid, HTML (Cytoscape), MDX, or
 reStructuredText. An optional LLM step names and describes components.
 
-> Rebuilding the value of [CodeBoarding](https://github.com/CodeBoarding/CodeBoarding) as an
-> independent, Rust-native tool. See `NOTICE` for attribution.
-
 ## What works today
 
-- `codeatlas full --local <repo>` produces `.codeboarding/analysis.json` + `fingerprint.json`
-  (upstream-compatible schema) with deterministic, directory-derived component names.
+- `codeatlas full --local <repo>` produces `.codeatlas/analysis.json` + `fingerprint.json`
+  (schema-compatible output) with deterministic, directory-derived component names.
 - `codeatlas-render` (or `--render md|html|mdx|rst`) renders overview + per-component docs, with a
   manifest that reconciles stale files and refuses to overwrite unowned files.
 - Optional component naming/description via an OpenAI-compatible provider (OpenAI, Ollama,
@@ -23,21 +20,21 @@ reStructuredText. An optional LLM step names and describes components.
 ## Quick start
 
 ```bash
-pip install codeatlas
+pip install codeatlas-rs
 codeatlas full --local /path/to/repo
 codeatlas full --local /path/to/repo --render md
-codeatlas-render /path/to/repo/.codeboarding/analysis.json --format html
+codeatlas-render /path/to/repo/.codeatlas/analysis.json --format html
 ```
 
-Output is written to `<repo>/.codeboarding/`. Configure an optional provider via
-`OPENAI_API_KEY` (+ `OPENAI_BASE_URL`, `AGENT_MODEL`); see `codeatlas.llm`.
+Output is written to `<repo>/.codeatlas/`. Configure an optional provider via
+`OPENAI_API_KEY` (+ `OPENAI_BASE_URL`, `AGENT_MODEL`); see `codeatlas_rs.llm`.
 
 ## Status & roadmap
 
 The deterministic core is implemented end-to-end (discovery → tree-sitter extraction → cross-file
 resolution → clustering → `analysis.json` → rendering). See `docs/FEATURE_PARITY.md` for what is
 implemented vs. deferred, and `docs/IMPLEMENTATION_ROADMAP.md` for the milestone plan. Documented
-limitations: tree-sitter resolution is intentionally simpler than upstream's LSP pipeline
+limitations: tree-sitter resolution is intentionally simpler than an LSP pipeline
 (`docs/audit/KNOWN_GAPS.md`) and clustering is a simplified deterministic directory partition.
 
 ## Bundle into any repository
@@ -47,15 +44,15 @@ the docs, and (optionally) commits them so the map evolves with the code. See
 [`packages/codeatlas-bundle`](packages/codeatlas-bundle).
 
 ```bash
-pip install codeatlas codeatlas-bundle
+pip install codeatlas-rs codeatlas-bundle
 cd my-repo && codeatlas-bundle init && codeatlas-bundle build --commit
 ```
 
 ## Layout
 
 - `crates/core` — pure-Rust analysis engine (no Python, no network, no LLM).
-- `crates/py` — PyO3 bindings (`codeatlas._core`).
-- `python/codeatlas` — the Python wrapper (CLI, rendering, optional LLM).
+- `crates/py` — PyO3 bindings (`codeatlas_rs._core`).
+- `python/codeatlas_rs` — the Python wrapper (CLI, rendering, optional LLM).
 - `packages/codeatlas-bundle` — pure-Python package that bundles the docs into other repositories.
 
 ## Development

@@ -169,7 +169,7 @@ const MAX_FILE_BYTES: usize = 8 * 1024 * 1024;
 
 /// Run a full deterministic analysis of the repository at `repo_path`.
 pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
-    let output_dir = opts.repo_path.join(".codeboarding");
+    let output_dir = opts.repo_path.join(".codeatlas");
     let mut ignored: Vec<PathBuf> = vec![output_dir];
     for extra in &opts.ignore_paths {
         ignored.push(if extra.is_absolute() {

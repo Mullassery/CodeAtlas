@@ -55,7 +55,7 @@ impl Language {
 /// upstream `_ALWAYS_IGNORED_DIRS` (plus the output dir).
 const ALWAYS_IGNORED_DIRS: &[&str] = &[
     ".git",
-    ".codeboarding",
+    ".codeatlas",
     "node_modules",
     "__pycache__",
     "build",
@@ -104,7 +104,7 @@ fn walk_file_paths(root: &Path, ignored: &[PathBuf]) -> Vec<String> {
         .git_exclude(false)
         .hidden(true)
         .parents(true)
-        .add_custom_ignore_filename(".codeboardingignore")
+        .add_custom_ignore_filename(".codeatlasignore")
         .build();
 
     for entry in walker.flatten() {
@@ -183,9 +183,9 @@ mod tests {
         fs::write(root.join("src/c.go"), "package c").unwrap();
         fs::write(root.join("notes.txt"), "not code").unwrap();
         fs::write(root.join("node_modules/d.js"), "ignored").unwrap();
-        fs::write(root.join(".codeboardingignore"), "src/c.go\n").unwrap();
+        fs::write(root.join(".codeatlasignore"), "src/c.go\n").unwrap();
 
-        let files = discover_source_files(root, &[root.join(".codeboarding")]);
+        let files = discover_source_files(root, &[root.join(".codeatlas")]);
         let rels: Vec<&str> = files.iter().map(|f| f.rel_path.as_str()).collect();
         assert_eq!(rels, vec!["src/a.py", "src/pkg/b.py"]);
         assert_eq!(present_languages(&files).len(), 1);

@@ -1,8 +1,8 @@
 # CodeAtlas — Product Requirements
 
 CodeAtlas is an independent, Rust-native codebase architecture analysis tool with a Python/PyPI
-wrapper. It rebuilds the valuable behavior of CodeBoarding: discover code structure, identify
-components and relationships, analyze dependencies, and generate architecture documentation.
+wrapper. It discovers code structure, identifies
+components and relationships, analyzes dependencies, and generates architecture documentation.
 
 ## 1. Product scope (v1)
 
@@ -16,7 +16,7 @@ components and relationships, analyze dependencies, and generate architecture do
 - Remote repo cloning + hosted upload.
 - Telemetry (privacy: none by default).
 - Interactive web UI / VS Code extension / GitHub Action.
-- `codeboarding-setup` binary installer.
+- A language-server tool installer (analysis is tree-sitter-based; servers are out of scope).
 
 ## 2. Requirements (functional)
 
@@ -24,8 +24,8 @@ Each requirement is tagged `[core delivered by Rust]` / `[wrapper]` and carries 
 
 ### R1 — Repository discovery & ignore [core]
 - R1.1 Walk a repo root, collect source files by suffix.
-- R1.2 Honor `.gitignore` and `.codeboarding/.codeboardingignore` (gitwildmatch semantics).
-- R1.3 Always ignore `.git`, `.codeboarding`, `node_modules`, vendored/build dirs.
+- R1.2 Honor `.gitignore` and `.codeatlas/.codeatlasignore` (gitwildmatch semantics).
+- R1.3 Always ignore `.git`, `.codeatlas`, `node_modules`, vendored/build dirs.
 - R1.4 Detect languages from suffixes (python, js, ts, jsx, tsx, go, java, rust, php, csharp, ...).
 - *Acceptance:* given a fixture with mixed files + ignores, the discovered/ignored sets match spec.
 
@@ -56,7 +56,7 @@ Each requirement is tagged `[core delivered by Rust]` / `[wrapper]` and carries 
   `--project-name`, `--depth-cap`, `--render md|html|mdx|rst`, `--force`.
 - R5.2 `codeatlas-render` renders an existing `analysis.json` without analysis.
 - R5.3 Python API `run_full(...)` / `build_generator(...)` / `DiagramGenerator(...)` mirroring upstream names.
-- *Acceptance:* `pip install` + `codeatlas --local ./fixture` produces `.codeboarding/analysis.json`.
+- *Acceptance:* `pip install` + `codeatlas --local ./fixture` produces `.codeatlas/analysis.json`.
 
 ### R6 — Semantically named components [wrapper, optional LLM]
 - R6.1 When a provider is configured, name/describe components and relations (2–5 key entities each).

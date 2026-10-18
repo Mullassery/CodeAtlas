@@ -1,8 +1,8 @@
 //! Serialization models for the unified `analysis.json` document.
 //!
-//! Field names and ordering match the upstream CodeBoarding `analysis.json`
-//! contract (see `docs/architecture/ADR/0005`) so downstream readers (web
-//! viewer, editors, docs tooling) can consume CodeAtlas output unchanged.
+//! Field names and ordering follow the established `analysis.json` contract
+//! (see `docs/architecture/ADR/0005`) so downstream readers (web viewer,
+//! editors, docs tooling) can consume CodeAtlas output unchanged.
 
 use std::collections::BTreeMap;
 

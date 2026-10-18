@@ -3,34 +3,6 @@ CodeAtlas
 Copyright (c) 2026 Mullassery. Licensed under the MIT License (see LICENSE).
 
 CodeAtlas is an independent, Rust-native implementation of codebase architecture
-analysis. Its design — the analysis.json output schema, the component/relation
-model, and the overall feature set — is informed by the open-source project
-CodeBoarding (https://github.com/CodeBoarding/CodeBoarding), released under the
-MIT License (Copyright (c) 2025 CodeBoarding).
-
-No upstream source code or documentation prose is copied into CodeAtlas; the
-interfaces and data-model shapes are reproduced for output-format compatibility.
-The CodeBoarding copyright and permission notice is preserved here as required
-by the MIT License for any portions derived from its work:
-
-    MIT License
-
-    Copyright (c) 2025 CodeBoarding
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
+analysis. It is a standalone project: its analysis pipeline, data model, and
+documentation tooling are its own, and it contains no third-party project source
+code or documentation prose.

@@ -14,7 +14,7 @@ wrapper). Decisions are traceable to `docs/architecture/ADR/*.md`.
 └──────────────────────────┬──────────────────────────────────┘
                            │ PyO3 (maturin native extension)
 ┌──────────────────────────▼──────────────────────────────────┐
-│ codeatlas-py   (Rust cdylib → `codeatlas._core`)            │
+│ codeatlas-py   (Rust cdylib → `codeatlas_rs._core`)            │
 │   Thin PyO3 surface: `analyze(path, opts) -> AnalysisJson`, │
 │   version(), error mapping                                   │
 └──────────────────────────┬──────────────────────────────────┘
@@ -41,7 +41,7 @@ crates/
       analysis/       # tree-sitter per-language extractors
       clustering/     # name-tree draft/replay, groupers, TreeSpec
       serialize/      # analysis.json, fingerprint, coverage
-  py/            # cdylib `codeatlas._core` (PyO3)
+  py/            # cdylib `codeatlas_rs._core` (PyO3)
     src/lib.rs
 python/
   codeatlas/
@@ -100,7 +100,7 @@ Deterministic output is a hard requirement; everything above is pure and orderin
 ## 7. Build & packaging
 
 - `maturin build --release --locked` builds the extension; `--interpreter python3.12` for CI.
-- `[tool.maturin] module-name = "codeatlas._core"`, `manifest-path = "crates/py/Cargo.toml"`.
+- `[tool.maturin] module-name = "codeatlas_rs._core"`, `manifest-path = "crates/py/Cargo.toml"`.
 - CI (GitHub Actions) runs `cargo fmt --check`, `cargo clippy`, `cargo test`, `maturin build`, and
   `pytest` on the wrapper, on Linux + macOS; manylinux wheels for release.
 

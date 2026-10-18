@@ -28,7 +28,7 @@ python -m pytest tests
 - Deterministic output is a hard requirement: use `BTreeMap`/`BTreeSet` and stable
   sorting for any order-sensitive serialization.
 - Prefer small, reviewed commits. Do not commit secrets or build artifacts
-  (`dist/`, `target/`, `.codeboarding/`).
+  (`dist/`, `target/`, `.codeatlas/`).
 - Add tests for parsers, models, graph algorithms, and serialization; security
   paths (symlinks, oversize files, hostile input) should stay covered.
 - Run `cargo clippy --workspace --all-targets -- -D warnings` and

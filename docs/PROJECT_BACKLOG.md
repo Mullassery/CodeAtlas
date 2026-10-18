@@ -10,7 +10,7 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | ID | Task | Status | AC / Evidence |
 |---|---|---|---|
 | M0-1 | Cargo workspace (core + py), maturin mixed layout, `.gitignore`, LICENSE/NOTICE | done | `cargo build --workspace` OK (with PYO3_PYTHON) |
-| M0-2 | PyO3 binding `codeatlas._core.version()` | done | `maturin build` → wheel imports; `codeatlas --version` prints `0.1.0` |
+| M0-2 | PyO3 binding `codeatlas_rs._core.version()` | done | `maturin build` → wheel imports; `codeatlas --version` prints `0.1.0` |
 | M0-3 | Rust unit tests run | done | `cargo test -p codeatlas-core` → 2 passed |
 | M0-4 | CI (fmt, clippy, test, build) | done | `.github/workflows/ci.yml` |
 
@@ -25,7 +25,7 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | ID | Task | Status | AC |
 |---|---|---|---|
 | M2-1 | Suffix→language map + file walker | done | fixture discovery tests |
-| M2-2 | gitwildmatch ignore (`.gitignore` + `.codeboardingignore`) | done | ignore fixtures |
+| M2-2 | gitwildmatch ignore (`.gitignore` + `.codeatlasignore`) | done | ignore fixtures |
 
 ## Milestone M3 — Tree-sitter analysis (Python first)
 | ID | Task | Status | AC |

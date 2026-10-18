@@ -21,8 +21,8 @@ without explicit authorization.
 
 ## Security & licensing
 - [ ] No secrets/tokens in the repository or build artifacts.
-- [ ] Dependency license audit complete (`cargo deny` + `docs/audit/DEPENDENCY_AND_LICENSE_AUDIT.md`).
-- [ ] `LICENSE` and `NOTICE` present and accurate (attribution to CodeBoarding).
+- [ ] Dependency license audit complete (`cargo deny`).
+- [ ] `LICENSE` and `NOTICE` present and accurate.
 
 ## Documentation & distribution
 - [ ] README, CHANGELOG, CONTRIBUTING, and architecture docs up to date.

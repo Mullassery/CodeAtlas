@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from codeatlas.render import sanitize
+from codeatlas_rs.render import sanitize
 
 
 def generate_html(doc: dict[str, Any]) -> str:

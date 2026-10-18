@@ -13,8 +13,8 @@ import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import codeatlas
-from codeatlas.render import render
+import codeatlas_rs
+from codeatlas_rs.render import render
 
 from codeatlas_bundle.config import CONFIG_FILENAME, Config, load_config
 
@@ -93,7 +93,7 @@ def _generate(root: Path, cfg: Config, out_dir: Path) -> list[Path]:
     # Always exclude the repository's configured output dir from analysis, even
     # when writing to a temporary directory (as `check` does).
     repo_output = root / cfg.output_dir
-    analysis_json, fingerprint_json, coverage_json = codeatlas.analyze(
+    analysis_json, fingerprint_json, coverage_json = codeatlas_rs.analyze(
         str(root),
         project_name=cfg.project_name,
         depth_cap=cfg.depth_cap,

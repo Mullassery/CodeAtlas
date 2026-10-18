@@ -4,7 +4,7 @@
 - **Date:** 2026-10-17
 
 ## Context
-Upstream CodeBoarding extracts symbols/edges primarily through **language servers** (pyright,
+The reference analysis engine extracts symbols/edges primarily through **language servers** (pyright,
 typescript-language-server, gopls, JDTLS, rust-analyzer, etc.), with tree-sitter used only for call-site
 introspection. LSP gives precise cross-file resolution, type hierarchy, and virtual dispatch, but
 requires heavy, per-language server binaries, Node/.NET/JDK runtimes, and a JSON-RPC client.
