@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use tree_sitter::{Node, Parser};
 
-use super::{ExtractedFile, UnresolvedCall};
+use super::{ExtractedFile, Import, UnresolvedCall};
 use crate::model::{CallSite, Edge, Node as GraphNode, NodeType};
 
 #[derive(Clone, Copy, PartialEq)]
@@ -53,6 +53,8 @@ pub fn extract<'a>(module: &'a str, source: &'a str) -> Result<ExtractedFile, su
     let mut parents: Vec<Parent> = Vec::new();
     walk_calls(root, source.as_bytes(), &mut parents, &mut ctx);
 
+    collect_imports(root, source.as_bytes(), &mut ctx);
+
     finalize(&mut ctx.out);
     Ok(ctx.out)
 }
@@ -75,6 +77,8 @@ fn finalize(out: &mut ExtractedFile) {
         ))
     });
     out.reference_edges.dedup();
+    out.imports.sort_by(|a, b| a.module.cmp(&b.module));
+    out.imports.dedup();
     out.unresolved_calls.sort_by(|a, b| {
         (
             a.caller.as_str(),
@@ -282,6 +286,51 @@ fn walk_calls<'a>(node: Node<'a>, src: &'a [u8], parents: &mut Vec<Parent>, ctx:
     }
 }
 
+fn collect_imports<'a>(node: Node<'a>, src: &'a [u8], ctx: &mut Ctx<'a>) {
+    if node.kind() == "use_declaration" {
+        if let Some(module) = normalize_use(node.utf8_text(src).unwrap_or("")) {
+            ctx.out.imports.push(Import { module });
+        }
+        return;
+    }
+    let mut cursor = node.walk();
+    for child in node.named_children(&mut cursor) {
+        collect_imports(child, src, ctx);
+    }
+}
+
+/// Reduce a `use ...;` declaration to its module path.
+///
+/// `use a::b::{c, d};` -> `a::b`, `use a::b as c;` -> `a::b`,
+/// `use a::b::*;` -> `a::b`, `use serde_json;` -> `serde_json`.
+fn normalize_use(raw: &str) -> Option<String> {
+    let mut s = raw.trim();
+    for kw in ["pub(crate) ", "pub(super) ", "pub(self) ", "pub "] {
+        if let Some(rest) = s.strip_prefix(kw) {
+            s = rest;
+            break;
+        }
+    }
+    let s = s.strip_prefix("use").unwrap_or(s).trim();
+    let s = s.strip_suffix(';').unwrap_or(s).trim();
+    let s = match s.find('{') {
+        Some(i) => &s[..i],
+        None => s,
+    };
+    let s = match s.find(" as ") {
+        Some(i) => &s[..i],
+        None => s,
+    };
+    let s = s.trim_start_matches("::").trim();
+    let s = s.strip_suffix("::*").unwrap_or(s);
+    let s = s.trim_end_matches("::").trim();
+    if s.is_empty() {
+        None
+    } else {
+        Some(s.to_string())
+    }
+}
+
 fn handle_call<'a>(node: Node<'a>, src: &'a [u8], parents: &[Parent], ctx: &mut Ctx<'a>) {
     let Some(function) = node.child_by_field_name("function") else {
         return;
@@ -463,6 +512,31 @@ mod tests {
             .iter()
             .map(|e| (e.source.clone(), e.destination.clone()))
             .collect()
+    }
+
+    #[test]
+    fn extracts_imports() {
+        let src = r#"
+use serde_json;
+use std::collections::{HashMap, BTreeMap};
+use crate::engine::Engine as Eng;
+use super::sibling::*;
+use ::legacy::thing;
+
+fn run() {}
+"#;
+        let out = extract("demo", src).unwrap();
+        let mods: Vec<&str> = out.imports.iter().map(|i| i.module.as_str()).collect();
+        assert_eq!(
+            mods,
+            vec![
+                "crate::engine::Engine",
+                "legacy::thing",
+                "serde_json",
+                "std::collections",
+                "super::sibling",
+            ]
+        );
     }
 
     #[test]

@@ -4,6 +4,13 @@ All notable changes to CodeAtlas are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-10-18
+
+### Added
+- Rust import extraction: `file_coverage.json`'s `imports` map is now populated
+  for Rust sources (`use` declarations, including groups, aliases, globs and
+  relative paths), bringing Rust to parity with Python/Go/TypeScript.
+
 ## [0.2.0] - 2026-10-18
 
 ### Added
