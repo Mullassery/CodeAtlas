@@ -24,6 +24,7 @@ pip install codeatlas-rs
 codeatlas full --local /path/to/repo
 codeatlas full --local /path/to/repo --render md
 codeatlas-render /path/to/repo/.codeatlas/analysis.json --format html
+codeatlas diff old/.codeatlas/analysis.json new/.codeatlas/analysis.json --fail-on-change
 ```
 
 Output is written to `<repo>/.codeatlas/`. Configure an optional provider via

@@ -4,6 +4,15 @@ All notable changes to CodeAtlas are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-10-19
+
+### Added
+- `codeatlas diff BEFORE AFTER` compares two `analysis.json` files and reports
+  added/removed components, component relations, added/removed methods, and
+  changed method hashes/locations. Formats: text, Markdown, JSON.
+- `--fail-on-change` exits `1` when anything changed, so a PR job can gate on
+  architecture drift. Unit tests cover the diff and CLI exit behavior.
+
 ## [0.5.0] - 2026-10-19
 
 ### Added

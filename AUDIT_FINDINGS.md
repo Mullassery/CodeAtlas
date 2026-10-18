@@ -33,6 +33,13 @@ cargo clippy -p codeatlas-core --all-targets -- -D warnings
 # clean
 ```
 
+## Follow-up shipped
+
+- `codeatlas diff BEFORE AFTER [--format text|md|json]` compares two
+  `analysis.json` maps (components, relations, methods) and
+  `--fail-on-change` exits 1 for CI. `tests/test_diff.py`: 3 passed, 1 skipped
+  (the CLI test skips when the compiled `_core` extension is not built).
+
 ## Remaining work / follow-ups
 
 - Java type resolution is still the same unique-simple-name heuristic as the

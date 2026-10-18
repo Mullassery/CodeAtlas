@@ -80,6 +80,12 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 |---|---|---|---|
 | M10-1 | Golden `analysis.json` snapshot on a committed multi-language fixture | done | `crates/core/tests/golden.rs` |
 
+## Milestone M12 — Architecture diff
+| ID | Task | Status | AC |
+|---|---|---|---|
+| M12-1 | `codeatlas diff` for two `analysis.json` files (components, relations, methods) | done | unit tests + text/Markdown/JSON |
+| M12-2 | `--fail-on-change` CI exit code | done | CLI test |
+
 ## Milestone M11 — Cross-repo bundling
 | ID | Task | Status | AC |
 |---|---|---|---|

@@ -43,6 +43,16 @@ def build_parser() -> argparse.ArgumentParser:
     render.add_argument("--format", choices=("md", "html", "mdx", "rst"), default="md")
     render.add_argument("--output-dir", type=str)
 
+    diff = sub.add_parser("diff", help="Compare two analysis.json files")
+    diff.add_argument("before", type=str)
+    diff.add_argument("after", type=str)
+    diff.add_argument("--format", choices=("text", "md", "json"), default="text")
+    diff.add_argument(
+        "--fail-on-change",
+        action="store_true",
+        help="Exit 1 when any architecture/method change is detected (for CI).",
+    )
+
     return parser
 
 
@@ -53,7 +63,38 @@ def main(argv: list[str] | None = None) -> None:
             _analysis=args.analysis_path, _format=args.format, _output_dir=args.output_dir
         )
         return
+    if args.command == "diff":
+        diff_main(
+            before=args.before,
+            after=args.after,
+            output_format=args.format,
+            fail_on_change=args.fail_on_change,
+        )
+        return
     run_full(args)
+
+
+def diff_main(*, before: str, after: str, output_format: str, fail_on_change: bool) -> None:
+    from codeatlas_rs.diff import (
+        diff_analyses,
+        load_analysis,
+        render_markdown,
+        render_text,
+    )
+
+    before_analysis = load_analysis(before)
+    after_analysis = load_analysis(after)
+    result = diff_analyses(before_analysis, after_analysis)
+
+    if output_format == "json":
+        print(json.dumps(result.to_dict(), indent=2))
+    elif output_format == "md":
+        print(render_markdown(result))
+    else:
+        print(render_text(result))
+
+    if fail_on_change and result.has_changes:
+        raise SystemExit(1)
 
 
 def run_full(args: argparse.Namespace) -> None:
