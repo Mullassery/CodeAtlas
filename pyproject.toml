@@ -27,6 +27,7 @@ module-name = "codeatlas_rs._core"
 manifest-path = "crates/py/Cargo.toml"
 python-source = "python"
 features = ["pyo3/extension-module"]
+include = ["LICENSE", "NOTICE", "README.md", "CHANGELOG.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
