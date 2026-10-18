@@ -22,6 +22,8 @@ All notable changes to CodeAtlas are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-18
+
 ### Added
 - Deterministic analysis core in Rust: repository discovery (gitignore +
   `.codeatlasignore`), content fingerprinting, and tree-sitter extraction
