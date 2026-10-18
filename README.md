@@ -14,8 +14,8 @@ reStructuredText. An optional LLM step names and describes components.
 - Optional component naming/description via an OpenAI-compatible provider (OpenAI, Ollama,
   OpenRouter, DeepSeek, LiteLLM, LM Studio). Without a provider, analysis still succeeds with
   deterministic names.
-- Languages: **Python**, **Rust**, **Go**, and **JavaScript/TypeScript** (tree-sitter). Discovery recognizes
-  `.java/.php/.cs`; their parsers land next.
+- Languages: **Python**, **Rust**, **Go**, **JavaScript/TypeScript**, and **Java**
+  (tree-sitter). Discovery recognizes `.php/.cs`; their parsers land next.
 
 ## Quick start
 
@@ -28,6 +28,12 @@ codeatlas-render /path/to/repo/.codeatlas/analysis.json --format html
 
 Output is written to `<repo>/.codeatlas/`. Configure an optional provider via
 `OPENAI_API_KEY` (+ `OPENAI_BASE_URL`, `AGENT_MODEL`); see `codeatlas_rs.llm`.
+
+## Audit findings
+
+The 2026-10-19 implementation audit — including the Java extractor work,
+verification results, and remaining gaps — is recorded in
+[`AUDIT_FINDINGS.md`](AUDIT_FINDINGS.md).
 
 ## Status & roadmap
 

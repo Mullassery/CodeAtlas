@@ -4,6 +4,17 @@ All notable changes to CodeAtlas are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-10-19
+
+### Added
+- Java extraction via tree-sitter: classes, interfaces, enums and records;
+  methods and constructors; imports; `extends`/`implements` inheritance edges
+  (resolved across files via the existing class-base index); `this`/unqualified
+  and known-type constructor call edges. Java package declarations are used as
+  the module prefix, so `Foo.java` no longer produces `pkg.Foo.Foo`.
+- Unit tests for the extractor plus an end-to-end pipeline test covering
+  Java discovery, methods index entries, and cross-file class resolution.
+
 ## [0.3.0] - 2026-10-18
 
 ### Added

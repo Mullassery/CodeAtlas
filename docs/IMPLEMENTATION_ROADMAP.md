@@ -46,7 +46,7 @@ green. Status is tracked in `docs/PROJECT_BACKLOG.md` during execution.
 - *Acceptance:* `cargo test` + `pytest` green; clippy clean; no network in core tests.
 
 ## M9 — Later languages & parity (post-v1)
-- Add Rust, JS/TS, Go, Java grammars; then LSP adapters; incremental/partial; health; packaging.
+- Add Rust, JS/TS, Go, Java grammars (all shipped); then LSP adapters; incremental/partial; health; packaging.
 
 ## Milestone ↔ phase traceability
 | Milestone | Phase |

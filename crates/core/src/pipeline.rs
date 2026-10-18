@@ -659,6 +659,48 @@ mod tests {
     }
 
     #[test]
+    fn analyzes_java_files_end_to_end() {
+        let tmp = TempDir::new();
+        let root = tmp.path();
+        fs::create_dir_all(root.join("app")).unwrap();
+        fs::create_dir_all(root.join("core")).unwrap();
+        fs::write(
+            root.join("app/Service.java"),
+            "package app;\npublic class Service extends Base {\n  public void run() { helper(); }\n}\n",
+        )
+        .unwrap();
+        fs::write(
+            root.join("core/Base.java"),
+            "package core;\npublic class Base { public void start() {} }\n",
+        )
+        .unwrap();
+        fs::write(
+            root.join("core/Helper.java"),
+            "package core;\npublic class Helper { public void helper() {} }\n",
+        )
+        .unwrap();
+
+        let opts = AnalyzeOptions {
+            repo_path: root.to_path_buf(),
+            project_name: "javademo".into(),
+            depth_cap: 3,
+            ignore_paths: Vec::new(),
+        };
+        let result = analyze(&opts).unwrap();
+        let a = &result.analysis;
+
+        assert!(a
+            .methods_index
+            .contains_key("app/Service.java|app.Service.run"));
+        assert!(a
+            .methods_index
+            .contains_key("core/Base.java|core.Base.start"));
+        assert!(a
+            .methods_index
+            .contains_key("core/Helper.java|core.Helper.helper"));
+    }
+
+    #[test]
     fn hostile_content_does_not_panic() {
         let tmp = TempDir::new();
         let root = tmp.path();

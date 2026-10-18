@@ -1,5 +1,7 @@
 # Project Backlog
 
+> 2026-10-19 implementation findings: see [`../AUDIT_FINDINGS.md`](../AUDIT_FINDINGS.md).
+
 Lightweight task tracking. IDs are stable; status ∈ `todo` | `doing` | `done` | `blocked`.
 Acceptance criteria (AC) and test evidence are recorded as they complete.
 
@@ -71,7 +73,7 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | M9-1 | Rust tree-sitter extractor | done | unit tests + self-dogfood |
 | M9-2 | Go extractor | done | unit tests |
 | M9-3 | JavaScript/TypeScript extractor | done | TS/TSX auto-fallback, unit tests |
-| M9-4 | Java extractor | todo | |
+| M9-4 | Java extractor | done | classes/interfaces/enums/records, methods/constructors, imports, inheritance; unit + pipeline tests |
 
 ## Milestone M10 — Regression safety
 | ID | Task | Status | AC |

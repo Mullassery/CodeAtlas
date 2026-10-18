@@ -5,6 +5,7 @@
 //! (ADR-0002). v1 ships a single tree-sitter implementation per language.
 
 pub mod go;
+pub mod java;
 pub mod python;
 pub mod rust;
 pub mod typescript;
@@ -62,6 +63,7 @@ pub fn extract(language: Language, module: &str, source: &str) -> Result<Extract
         Language::TypeScript | Language::JavaScript => {
             typescript::extract(module, source, language)
         }
+        Language::Java => java::extract(module, source),
         other => Err(Error::Unsupported(other)),
     }
 }
