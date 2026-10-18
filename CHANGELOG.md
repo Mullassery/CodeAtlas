@@ -4,6 +4,14 @@ All notable changes to CodeAtlas are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-10-19
+
+### Added
+- C# extraction via tree-sitter: namespaces, classes, interfaces, enums,
+  records/structs, methods, constructors, `using` imports, base-list
+  inheritance, `this`/unqualified calls, and `new` constructor edges. Unit
+  tests cover symbols, calls, imports, and inheritance.
+
 ## [0.6.0] - 2026-10-19
 
 ### Added

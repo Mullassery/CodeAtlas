@@ -4,6 +4,7 @@
 //! or augment it later without touching clustering or serialization
 //! (ADR-0002). v1 ships a single tree-sitter implementation per language.
 
+pub mod csharp;
 pub mod go;
 pub mod java;
 pub mod php;
@@ -66,7 +67,7 @@ pub fn extract(language: Language, module: &str, source: &str) -> Result<Extract
         }
         Language::Java => java::extract(module, source),
         Language::Php => php::extract(module, source),
-        other => Err(Error::Unsupported(other)),
+        Language::CSharp => csharp::extract(module, source),
     }
 }
 

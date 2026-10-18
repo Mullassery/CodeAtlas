@@ -46,6 +46,6 @@ cargo clippy -p codeatlas-core --all-targets -- -D warnings
   other tree-sitter extractors; it is not LSP-level.
 - Generic types, nested/anonymous classes, method references, and
   `super.method()` calls are not specially resolved.
-- Kotlin and C# remain unsupported (PHP now ships).
+- Kotlin remains unsupported (PHP and C# now ship).
 - The `analysis.json` golden fixture does not yet include a Java file; the new
   pipeline test covers Java separately.

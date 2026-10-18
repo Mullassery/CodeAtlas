@@ -15,7 +15,7 @@ reStructuredText. An optional LLM step names and describes components.
   OpenRouter, DeepSeek, LiteLLM, LM Studio). Without a provider, analysis still succeeds with
   deterministic names.
 - Languages: **Python**, **Rust**, **Go**, **JavaScript/TypeScript**, **Java**,
-  and **PHP** (tree-sitter). Discovery recognizes `.cs`; its parser lands next.
+  **PHP**, and **C#** (tree-sitter).
 
 ## Quick start
 

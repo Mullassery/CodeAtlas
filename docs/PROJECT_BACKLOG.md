@@ -75,6 +75,7 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | M9-3 | JavaScript/TypeScript extractor | done | TS/TSX auto-fallback, unit tests |
 | M9-4 | Java extractor | done | classes/interfaces/enums/records, methods/constructors, imports, inheritance; unit + pipeline tests |
 | M9-5 | PHP extractor | done | namespaces, classes/interfaces/traits/enums, functions/methods, imports, inheritance, calls |
+| M9-6 | C# extractor | done | namespaces, classes/interfaces/enums/records/structs, methods/constructors, using, inheritance, calls |
 
 ## Milestone M10 — Regression safety
 | ID | Task | Status | AC |
