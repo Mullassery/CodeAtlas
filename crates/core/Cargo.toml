@@ -20,6 +20,7 @@ tree-sitter-go.workspace = true
 tree-sitter-javascript.workspace = true
 tree-sitter-typescript.workspace = true
 tree-sitter-java.workspace = true
+tree-sitter-php.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true

@@ -30,7 +30,7 @@ without explicit authorization.
 - [ ] Wheel/package distribution strategy documented (manylinux + platform wheels).
 
 ## Remaining before a `0.2.0` tag
-- [x] Java extractor (PHP/C# remain `unsupported_language`).
+- [x] Java and PHP extractors (C# remains `unsupported_language`).
 - [x] Golden/snapshot test for `analysis.json` against a committed fixture
       (`crates/core/tests/golden.rs`).
 - [ ] Golden/snapshot tests for `analysis.json` against a committed fixture.

@@ -6,6 +6,7 @@
 
 pub mod go;
 pub mod java;
+pub mod php;
 pub mod python;
 pub mod rust;
 pub mod typescript;
@@ -64,6 +65,7 @@ pub fn extract(language: Language, module: &str, source: &str) -> Result<Extract
             typescript::extract(module, source, language)
         }
         Language::Java => java::extract(module, source),
+        Language::Php => php::extract(module, source),
         other => Err(Error::Unsupported(other)),
     }
 }

@@ -4,6 +4,14 @@ All notable changes to CodeAtlas are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-10-19
+
+### Added
+- PHP extraction via tree-sitter: namespaces as module prefixes, classes,
+  interfaces, traits, enums, methods, top-level functions, imports,
+  `extends`/`implements` inheritance, `$this`/unqualified calls, and `new`
+  constructor edges. Unit tests cover symbols, calls, imports, and inheritance.
+
 ## [0.5.1] - 2026-10-19
 
 ### Added
