@@ -83,7 +83,7 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 |---|---|---|---|
 | M11-1 | `codeatlas-bundle` package (`init`/`build`/`check`, commit) | done | pytest (6 tests) |
 | M11-2 | Core `ignore_paths` so the bundle dir is excluded from discovery | done | pipeline tests |
-| M11-3 | Pilot onboarding across Mullassery repos | doing | PRs opened |
+| M11-3 | Pilot onboarding across Mullassery repos | done | 5 PRs (`docs/CROSS_REPO_ONBOARDING.md`) |
 
 ## Risks
 - LSP-level resolution fidelity (G1) — tracked in `docs/audit/KNOWN_GAPS.md`.
