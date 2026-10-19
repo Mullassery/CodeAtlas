@@ -31,6 +31,9 @@ All notable changes to CodeAtlas are documented here. The format follows
   is set; tree-sitter defines `_DEFAULT_SOURCE`, which glibc < 2.19 ignores.
   `.cargo/config.toml` now sets `CFLAGS=-D_GNU_SOURCE` for C dependencies, so
   manylinux and sdist builds on older glibc link cleanly.
+- The `abi3-py39` wheel now imports on Python 3.9. `codeatlas_rs/__init__.py`
+  used PEP 604 (`str | None`) annotations that were evaluated at import time;
+  it now uses `from __future__ import annotations` like the other modules.
 
 ## [0.7.0] - 2026-10-19
 
