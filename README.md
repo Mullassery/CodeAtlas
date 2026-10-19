@@ -87,6 +87,11 @@ python -m pytest tests
 
 Requires Rust (stable) and Python 3.9+ (3.12 recommended), with `maturin` for the Python package.
 
+## Queue status
+
+Shipped, blocked/failed, and rejected work for this repository is documented in
+[`QUEUE_STATUS.md`](QUEUE_STATUS.md).
+
 ## License
 
 MIT. See `LICENSE` and `NOTICE`.
