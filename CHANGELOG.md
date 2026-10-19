@@ -24,6 +24,14 @@ All notable changes to CodeAtlas are documented here. The format follows
   and `--format text|json` for local agents/editors.
 - Python query helpers in `codeatlas_rs.query`.
 
+### Fixed
+- manylinux wheels imported with `undefined symbol: le16toh`. tree-sitter's C
+  code needs glibc's `le16toh`/`be16toh` macros, which glibc 2.17 (the
+  manylinux2014 toolchain) hides under `-std=c11` unless a feature-test macro
+  is set; tree-sitter defines `_DEFAULT_SOURCE`, which glibc < 2.19 ignores.
+  `.cargo/config.toml` now sets `CFLAGS=-D_GNU_SOURCE` for C dependencies, so
+  manylinux and sdist builds on older glibc link cleanly.
+
 ## [0.7.0] - 2026-10-19
 
 ### Added

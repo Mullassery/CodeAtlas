@@ -1,0 +1,10 @@
+# tree-sitter's C code (src/portable/endian.h, src/unicode.h) needs the glibc
+# endian helpers `le16toh`/`be16toh`. It compiles with `-std=c11`, which makes
+# glibc hide those macros unless a feature-test macro enables `__USE_MISC`.
+# tree-sitter defines `_DEFAULT_SOURCE`, but glibc < 2.19 (e.g. the
+# manylinux2014/CentOS 7 toolchain used for manylinux_2_17 wheels) does not
+# understand it, so the calls become unresolved externs and the extension
+# fails to import with `undefined symbol: le16toh`. `_GNU_SOURCE` enables the
+# macros on every glibc version and is harmless on macOS/Windows.
+[env]
+CFLAGS = { value = "-D_GNU_SOURCE", force = false }
