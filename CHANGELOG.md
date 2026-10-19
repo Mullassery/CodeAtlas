@@ -17,6 +17,8 @@ All notable changes to CodeAtlas are documented here. The format follows
   print(codeatlas_rs.__version__)"`, including CPython 3.9 (the abi3 floor)
   and Alpine for the musllinux wheels. The sdist is installed and imported
   too.
+- CI now builds, installs, and imports the wheel on CPython 3.9 and 3.12
+  instead of only 3.12, so the abi3-py39 floor is checked before a release.
 - `.codeatlas/call_graph.json` sidecar: merged symbols plus call and reference
   edges, written by `codeatlas full` without changing the `analysis.json`
   schema.

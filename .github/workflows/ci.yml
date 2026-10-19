@@ -25,19 +25,24 @@ jobs:
         uses: EmbarkStudios/cargo-deny-action@v2
 
   python:
-    name: Python (build wheel + import + tests)
+    name: Python ${{ matrix.python-version }} (build wheel + import + tests)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.9 is the declared floor and the abi3-py39 tag; 3.12 is the newest tested.
+        python-version: ["3.9", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Install maturin
         run: pip install maturin
       - name: Build wheel
-        run: maturin build --release --interpreter python3.12 --out dist
+        run: maturin build --release --interpreter python --out dist
       - name: Install and smoke-test
         run: |
           pip install dist/*.whl
