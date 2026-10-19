@@ -37,6 +37,11 @@ def build_parser() -> argparse.ArgumentParser:
     full.add_argument(
         "--render", choices=("md", "html", "mdx", "rst"), help="Render docs after analysis"
     )
+    full.add_argument(
+        "--cache",
+        action="store_true",
+        help="Skip analysis when repository contents are unchanged (content-addressed cache)",
+    )
 
     render = sub.add_parser("render", help="Render an existing analysis.json")
     render.add_argument("analysis_path", type=str)
@@ -105,6 +110,23 @@ def run_full(args: argparse.Namespace) -> None:
     output_dir = Path(args.output_dir) if args.output_dir else repo_path / OUTPUT_DIR_NAME
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    cache = None
+    cache_key = None
+    if args.cache:
+        from codeatlas_rs.cache import AnalysisCache, repo_fingerprint
+
+        cache = AnalysisCache(output_dir / "cache")
+        cache_key = repo_fingerprint(repo_path)
+        cached = cache.load(cache_key)
+        if cached is not None:
+            _atomic_write(output_dir / ANALYSIS_FILENAME, cached.analysis_json)
+            _atomic_write(output_dir / FINGERPRINT_FILENAME, cached.fingerprint_json)
+            _atomic_write(output_dir / FILE_COVERAGE_FILENAME, cached.file_coverage_json)
+            print(f"Analysis unchanged; reused cache for {cache_key[:12]}")
+            if args.render:
+                render_main(_analysis=str(output_dir / ANALYSIS_FILENAME), _format=args.render)
+            return
+
     analysis_json, fingerprint_json, file_coverage_json = analyze(
         str(repo_path), project_name=args.project_name, depth_cap=args.depth_cap
     )
@@ -119,6 +141,10 @@ def run_full(args: argparse.Namespace) -> None:
     _atomic_write(output_dir / ANALYSIS_FILENAME, analysis_json)
     _atomic_write(output_dir / FINGERPRINT_FILENAME, fingerprint_json)
     _atomic_write(output_dir / FILE_COVERAGE_FILENAME, file_coverage_json)
+    if cache is not None and cache_key is not None:
+        from codeatlas_rs.cache import CacheEntry
+
+        cache.store(CacheEntry(cache_key, analysis_json, fingerprint_json, file_coverage_json))
 
     print(f"Analysis written to {output_dir / ANALYSIS_FILENAME}")
 

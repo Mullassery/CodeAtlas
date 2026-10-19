@@ -100,3 +100,16 @@ Full shipped/blocked/rejected detail: [`QUEUE_STATUS.md`](QUEUE_STATUS.md).
 ## License
 
 MIT. See `LICENSE` and `NOTICE`.
+## Incremental workflow cache
+
+`codeatlas full --cache` fingerprints repository source content (git HEAD/status
+plus file metadata) and reuses the previous analysis when nothing changed:
+
+```bash
+codeatlas full --local . --cache --render md
+```
+
+The first run stores analysis/fingerprint/coverage under `.codeatlas/cache/`;
+subsequent unchanged runs skip the Rust pipeline and reuse the artifacts. This
+is a whole-repository workflow cache, not per-file re-analysis.
+

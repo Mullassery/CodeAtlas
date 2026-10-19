@@ -4,6 +4,7 @@ This file records what was shipped, what is blocked/failed, and what is rejected
 
 ## Shipped
 - Java/PHP/C# extractors; architecture diff; PR action; CI import fix (0.7.0).
+- Incremental whole-repository workflow cache (`codeatlas full --cache`).
 
 ## Blocked / failed
 - Kotlin extractor (grammar incompatible with tree-sitter 0.25); Linux/Windows wheels.
