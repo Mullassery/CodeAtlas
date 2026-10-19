@@ -36,6 +36,20 @@ Output is written to `<repo>/.codeatlas/`. Configure an optional provider via
 `.github/actions/architecture-diff` runs it as a PR check. See
 [`docs/PR_DIFF.md`](docs/PR_DIFF.md).
 
+## Query the call graph
+
+`codeatlas full` also writes `.codeatlas/call_graph.json` with the merged
+symbols and call/reference edges. Query it locally without re-analysis or an
+LLM:
+
+```bash
+codeatlas query /path/to/repo helper
+codeatlas query /path/to/repo helper --direction callers --format json
+```
+
+`analysis.json` keeps its established schema; the call graph is a sidecar so
+local agents and editors can fetch precise symbol context.
+
 ## Audit findings
 
 The 2026-10-19 implementation audit — including the Java extractor work,

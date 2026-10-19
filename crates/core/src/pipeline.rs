@@ -154,6 +154,9 @@ pub struct AnalyzeResult {
     pub analysis: UnifiedAnalysis,
     pub fingerprint: BTreeMap<String, String>,
     pub file_coverage: FileCoverageReport,
+    /// The merged symbol/call graph. Not part of `analysis.json` for schema
+    /// compatibility; exposed as a separate `call_graph.json` sidecar.
+    pub call_graph: CallGraph,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -356,6 +359,7 @@ pub fn analyze(opts: &AnalyzeOptions) -> Result<AnalyzeResult, PipelineError> {
         analysis,
         fingerprint: file_hashes,
         file_coverage,
+        call_graph: graph,
     })
 }
 

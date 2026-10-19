@@ -4,6 +4,16 @@ All notable changes to CodeAtlas are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `.codeatlas/call_graph.json` sidecar: merged symbols plus call and reference
+  edges, written by `codeatlas full` without changing the `analysis.json`
+  schema.
+- `codeatlas query <repo-or-json> <symbol>` with `--direction callers|callees`
+  and `--format text|json` for local agents/editors.
+- Python query helpers in `codeatlas_rs.query`.
+
 ## [0.7.0] - 2026-10-19
 
 ### Added

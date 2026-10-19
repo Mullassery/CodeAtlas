@@ -13,11 +13,12 @@ import os
 import sys
 from pathlib import Path
 
-from codeatlas_rs import __version__, analyze
+from codeatlas_rs import __version__, analyze, analyze_with_call_graph
 
 ANALYSIS_FILENAME = "analysis.json"
 FINGERPRINT_FILENAME = "fingerprint.json"
 FILE_COVERAGE_FILENAME = "file_coverage.json"
+CALL_GRAPH_FILENAME = "call_graph.json"
 OUTPUT_DIR_NAME = ".codeatlas"
 
 
@@ -58,6 +59,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Exit 1 when any architecture/method change is detected (for CI).",
     )
 
+    query = sub.add_parser("query", help="Query a generated call graph")
+    query.add_argument(
+        "path",
+        type=str,
+        help="Repository directory (uses .codeatlas/call_graph.json) or a call_graph.json file",
+    )
+    query.add_argument("symbol", type=str, help="Fully qualified or simple symbol name")
+    query.add_argument(
+        "--direction",
+        choices=("callers", "callees", "both"),
+        default="both",
+        help="Which relationships to include",
+    )
+    query.add_argument("--format", choices=("text", "json"), default="text")
+
     return parser
 
 
@@ -67,6 +83,11 @@ def main(argv: list[str] | None = None) -> None:
         render_main(
             _analysis=args.analysis_path, _format=args.format, _output_dir=args.output_dir
         )
+        return
+    if args.command == "query":
+        from codeatlas_rs.query import query_main
+
+        query_main(args.path, args.symbol, direction=args.direction, output_format=args.format)
         return
     if args.command == "diff":
         diff_main(
@@ -127,7 +148,12 @@ def run_full(args: argparse.Namespace) -> None:
                 render_main(_analysis=str(output_dir / ANALYSIS_FILENAME), _format=args.render)
             return
 
-    analysis_json, fingerprint_json, file_coverage_json = analyze(
+    (
+        analysis_json,
+        fingerprint_json,
+        file_coverage_json,
+        call_graph_json,
+    ) = analyze_with_call_graph(
         str(repo_path), project_name=args.project_name, depth_cap=args.depth_cap
     )
 
@@ -141,6 +167,7 @@ def run_full(args: argparse.Namespace) -> None:
     _atomic_write(output_dir / ANALYSIS_FILENAME, analysis_json)
     _atomic_write(output_dir / FINGERPRINT_FILENAME, fingerprint_json)
     _atomic_write(output_dir / FILE_COVERAGE_FILENAME, file_coverage_json)
+    _atomic_write(output_dir / CALL_GRAPH_FILENAME, call_graph_json)
     if cache is not None and cache_key is not None:
         from codeatlas_rs.cache import CacheEntry
 
