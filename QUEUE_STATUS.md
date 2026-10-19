@@ -7,7 +7,13 @@ This file records what was shipped, what is blocked/failed, and what is rejected
 - Incremental whole-repository workflow cache (`codeatlas full --cache`).
 
 ## Blocked / failed
-- Kotlin extractor (grammar incompatible with tree-sitter 0.25); Linux/Windows wheels.
+- Kotlin extractor (grammar incompatible with tree-sitter 0.25).
+
+## Pending release verification
+- The release workflow now builds, smoke-tests, and merges Linux/macOS/Windows
+  wheels plus sdist, but PyPI 0.7.0 still only has a macOS arm64 wheel and the
+  sdist. The remaining gap closes when a `v*` tag is released; do not claim the
+  other wheels are published until then.
 
 ## Rejected / deferred
 - Chat UI; LSP-level resolution now.

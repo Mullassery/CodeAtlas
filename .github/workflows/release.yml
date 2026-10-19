@@ -5,8 +5,10 @@ name: Release
 # - `workflow_dispatch` builds artifacts only (no publish) for inspection.
 # - Pushing a `v*` tag publishes via PyPI Trusted Publishing (OIDC, no secrets).
 #
-# This is what produces manylinux wheels so Linux users (and CI) can
-# `pip install codeatlas-rs` without a Rust toolchain.
+# Every platform wheel is built, smoke-tested by importing the installed
+# wheel, and uploaded as an artifact. The publish job merges *all* artifacts
+# into a single `dist/` and refuses to publish unless the full expected set
+# (2 manylinux + 2 musllinux + universal2 macOS + Windows + sdist) is present.
 
 on:
   push:
@@ -16,98 +18,246 @@ on:
 permissions:
   contents: read
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
-  linux:
-    name: Linux wheels (${{ matrix.target }})
-    runs-on: ubuntu-latest
+  build-wheels:
+    name: Build wheel (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64, aarch64]
+        include:
+          - name: linux-x86_64
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            manylinux: auto
+          - name: linux-aarch64
+            os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            manylinux: auto
+          - name: musllinux-x86_64
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            manylinux: musllinux_1_2
+          - name: musllinux-aarch64
+            os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+            manylinux: musllinux_1_2
+          - name: macos-universal2
+            os: macos-latest
+            target: universal2-apple-darwin
+            manylinux: auto
+          - name: windows-x86_64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            manylinux: auto
     steps:
       - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
+
+      - name: Build wheel
+        uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          manylinux: auto
-          args: --release --out dist
+          manylinux: ${{ matrix.manylinux }}
+          args: --release --locked --out dist
+
+      - name: Verify a wheel was produced
+        shell: bash
+        run: |
+          ls -l dist
+          test "$(find dist -maxdepth 1 -name '*.whl' | wc -l)" -eq 1
+
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-linux-${{ matrix.target }}
-          path: dist
+          name: wheels-${{ matrix.name }}
+          path: dist/*.whl
+          if-no-files-found: error
 
-  musllinux:
-    name: musllinux wheels (${{ matrix.target }})
-    runs-on: ubuntu-latest
+  smoke-wheels:
+    name: Wheel smoke (${{ matrix.name }})
+    needs: build-wheels
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64, aarch64]
+        include:
+          # Lowest supported interpreter proves the abi3-py39 floor.
+          - name: linux-x86_64-py3.9
+            os: ubuntu-latest
+            artifact: wheels-linux-x86_64
+            python: "3.9"
+          - name: linux-x86_64-py3.12
+            os: ubuntu-latest
+            artifact: wheels-linux-x86_64
+            python: "3.12"
+          - name: linux-aarch64-py3.12
+            os: ubuntu-24.04-arm
+            artifact: wheels-linux-aarch64
+            python: "3.12"
+          - name: macos-universal2-py3.12
+            os: macos-latest
+            artifact: wheels-macos-universal2
+            python: "3.12"
+          - name: windows-x86_64-py3.12
+            os: windows-latest
+            artifact: wheels-windows-x86_64
+            python: "3.12"
     steps:
-      - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
+      - uses: actions/download-artifact@v4
         with:
-          target: ${{ matrix.target }}
-          manylinux: musllinux_1_2
-          args: --release --out dist
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheels-musllinux-${{ matrix.target }}
+          name: ${{ matrix.artifact }}
           path: dist
 
-  macos:
-    name: macOS wheels
-    runs-on: macos-latest
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install wheel and import it
+        shell: bash
+        run: |
+          ls -l dist
+          python -m pip install --no-cache-dir --force-reinstall --no-deps dist/*.whl
+          python -c "import codeatlas_rs; print(codeatlas_rs.__version__)"
+          codeatlas --version
+
+  smoke-musllinux:
+    name: Wheel smoke (${{ matrix.name }})
+    needs: build-wheels
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: musllinux-x86_64
+            os: ubuntu-latest
+            artifact: wheels-musllinux-x86_64
+          - name: musllinux-aarch64
+            os: ubuntu-24.04-arm
+            artifact: wheels-musllinux-aarch64
     steps:
-      - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
+      - uses: actions/download-artifact@v4
         with:
-          target: universal2-apple-darwin
-          args: --release --out dist
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheels-macos
+          name: ${{ matrix.artifact }}
           path: dist
 
-  windows:
-    name: Windows wheels
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
-        with:
-          target: x64
-          args: --release --out dist
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheels-windows
-          path: dist
+      # manylinux runners are glibc, so import the musl wheel in Alpine.
+      - name: Install wheel and import it (Alpine)
+        shell: bash
+        run: |
+          ls -l dist
+          docker run --rm -v "$PWD/dist:/dist:ro" python:3.12-alpine sh -c '
+            python -m pip install --no-cache-dir --no-deps /dist/*.whl &&
+            python -c "import codeatlas_rs; print(codeatlas_rs.__version__)"'
 
   sdist:
-    name: sdist
+    name: Build sdist
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: PyO3/maturin-action@v1
+
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
         with:
           command: sdist
           args: --out dist
+
+      - name: Verify an sdist was produced
+        shell: bash
+        run: |
+          ls -l dist
+          test "$(find dist -maxdepth 1 -name '*.tar.gz' | wc -l)" -eq 1
+
       - uses: actions/upload-artifact@v4
         with:
           name: sdist
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  smoke-sdist:
+    name: sdist install smoke
+    needs: sdist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
           path: dist
+      - name: Install sdist and import it
+        shell: bash
+        run: |
+          ls -l dist
+          python -m pip install --no-cache-dir --no-deps dist/*.tar.gz
+          python -c "import codeatlas_rs; print(codeatlas_rs.__version__)"
 
   publish:
     name: Publish to PyPI
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [linux, musllinux, macos, windows, sdist]
+    needs: [build-wheels, smoke-wheels, smoke-musllinux, sdist, smoke-sdist]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
+      contents: read
       id-token: write
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # merge-multiple puts every artifact into one flat dist/ directory.
       - uses: actions/download-artifact@v4
         with:
           path: dist
           merge-multiple: true
-      - uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Verify the complete artifact set
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          import pathlib
+          import tomllib
+
+          version = tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"]
+          tag = os.environ["GITHUB_REF_NAME"]
+          assert tag == f"v{version}", f"tag {tag} does not match pyproject version {version}"
+
+          names = sorted(p.name for p in pathlib.Path("dist").iterdir())
+          print("\n".join(names))
+
+          wheels = [n for n in names if n.endswith(".whl")]
+          sdists = [n for n in names if n.endswith(".tar.gz")]
+          assert len(sdists) == 1, f"expected 1 sdist, got {sdists}"
+          assert len(wheels) == 6, f"expected 6 wheels, got {len(wheels)}: {wheels}"
+          prefix = f"codeatlas_rs-{version}"
+          assert all(n.startswith(prefix) for n in names), (
+              f"artifact names do not match version {version}: {names}"
+          )
+          assert all(n.startswith(f"{prefix}-") for n in wheels), (
+              f"wheel names do not match version {version}: {wheels}"
+          )
+
+          required = {
+              "manylinux x86_64": lambda w: "manylinux" in w and "x86_64" in w,
+              "manylinux aarch64": lambda w: "manylinux" in w and "aarch64" in w,
+              "musllinux x86_64": lambda w: "musllinux" in w and "x86_64" in w,
+              "musllinux aarch64": lambda w: "musllinux" in w and "aarch64" in w,
+              "macOS universal2": lambda w: "macosx" in w and "universal2" in w,
+              "Windows x86_64": lambda w: "win_amd64" in w,
+          }
+          missing = [name for name, match in required.items() if not any(match(w) for w in wheels)]
+          assert not missing, f"missing platform wheels: {missing}"
+          PY
+
+      - name: Publish distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
+          print-hash: true

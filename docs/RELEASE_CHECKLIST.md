@@ -27,7 +27,23 @@ without explicit authorization.
 ## Documentation & distribution
 - [ ] README, CHANGELOG, CONTRIBUTING, and architecture docs up to date.
 - [ ] Version in `Cargo.toml` + `pyproject.toml` bumped per SemVer.
-- [ ] Wheel/package distribution strategy documented (manylinux + platform wheels).
+- [x] Wheel/package distribution strategy documented (manylinux + platform wheels).
+
+## Release pipeline (`.github/workflows/release.yml`)
+- [x] Matrix builds manylinux x86_64/aarch64, musllinux x86_64/aarch64, macOS
+      universal2, Windows x86_64, and an sdist.
+- [x] Each build job fails if it produces no wheel/sdist
+      (`if-no-files-found: error`).
+- [x] Every wheel is installed from `dist/*.whl` and imported
+      (`import codeatlas_rs; print(codeatlas_rs.__version__)`) before upload;
+      musllinux wheels are imported in an Alpine container and the abi3 wheel
+      is checked on CPython 3.9. The sdist is installed and imported too.
+- [x] Publish job downloads all artifacts with `merge-multiple: true`, asserts
+      the complete set (6 wheels + 1 sdist), and checks the tag matches
+      `pyproject.toml` before invoking PyPI Trusted Publishing.
+- [ ] First release after the pipeline fix verified end-to-end on PyPI. 0.7.0
+      predates the fix and only has a macOS arm64 wheel + sdist; the other
+      wheels are not published until a `v*` tag runs this workflow.
 
 ## Remaining before a `0.2.0` tag
 - [x] Java, PHP, and C# extractors.

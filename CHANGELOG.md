@@ -7,6 +7,16 @@ All notable changes to CodeAtlas are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Release hardening: the release workflow now merges every wheel artifact
+  into one `dist/` (`actions/download-artifact` with `merge-multiple`), fails
+  if a build job produces no wheel (`if-no-files-found: error`), and refuses
+  to publish unless the complete set is present (2 manylinux + 2 musllinux +
+  macOS universal2 + Windows + one sdist).
+- Wheel import smoke tests run before upload for every platform:
+  `pip install dist/*.whl` then `python -c "import codeatlas_rs;
+  print(codeatlas_rs.__version__)"`, including CPython 3.9 (the abi3 floor)
+  and Alpine for the musllinux wheels. The sdist is installed and imported
+  too.
 - `.codeatlas/call_graph.json` sidecar: merged symbols plus call and reference
   edges, written by `codeatlas full` without changing the `analysis.json`
   schema.

@@ -30,6 +30,13 @@ codeatlas diff old/.codeatlas/analysis.json new/.codeatlas/analysis.json --fail-
 Output is written to `<repo>/.codeatlas/`. Configure an optional provider via
 `OPENAI_API_KEY` (+ `OPENAI_BASE_URL`, `AGENT_MODEL`); see `codeatlas_rs.llm`.
 
+**Wheels:** `codeatlas-rs` ships `abi3-py39` wheels, so one wheel covers
+CPython 3.9+. The release workflow builds manylinux (x86_64/aarch64),
+musllinux (x86_64/aarch64), macOS universal2, and Windows x86_64 wheels plus
+an sdist. Each wheel is installed and imported before upload. PyPI 0.7.0
+predates that pipeline and only has a macOS arm64 wheel + sdist; wheels for
+the other platforms are published with the next tagged release.
+
 ## PR architecture diff
 
 `codeatlas diff` compares two architecture maps, and
