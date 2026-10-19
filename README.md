@@ -87,6 +87,16 @@ python -m pytest tests
 
 Requires Rust (stable) and Python 3.9+ (3.12 recommended), with `maturin` for the Python package.
 
+## Known issues and deferred work
+
+**Blocked / failed:**
+- Kotlin extractor (grammar incompatible with tree-sitter 0.25); Linux/Windows wheels.
+
+**Rejected / deferred:**
+- Chat UI; LSP-level resolution now.
+
+Full shipped/blocked/rejected detail: [`QUEUE_STATUS.md`](QUEUE_STATUS.md).
+
 ## Queue status
 
 Shipped, blocked/failed, and rejected work for this repository is documented in
