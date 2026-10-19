@@ -41,7 +41,7 @@ jobs:
       - name: Install and smoke-test
         run: |
           pip install dist/*.whl
-          python -c "import codeatlas; assert codeatlas.__version__"
+          python -c "import codeatlas_rs; assert codeatlas_rs.__version__"
           codeatlas --version
       - name: Python tests
         run: pip install pytest && pytest
