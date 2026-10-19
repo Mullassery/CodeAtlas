@@ -48,7 +48,9 @@ codeatlas query /path/to/repo helper --direction callers --format json
 ```
 
 `analysis.json` keeps its established schema; the call graph is a sidecar so
-local agents and editors can fetch precise symbol context.
+local agents and editors can fetch precise symbol context. See
+[`docs/CALL_GRAPH_QUERY.md`](docs/CALL_GRAPH_QUERY.md) for the schema and the
+Python API.
 
 ## Audit findings
 
