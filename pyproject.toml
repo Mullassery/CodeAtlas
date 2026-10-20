@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "codeatlas-rs"
-version = "0.8.0"
+version = "0.8.1"
 description = "Rust-native architecture maps for codebases"
 readme = "README.md"
 requires-python = ">=3.9"
