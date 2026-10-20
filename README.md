@@ -33,8 +33,7 @@ Output is written to `<repo>/.codeatlas/`. Configure an optional provider via
 **Wheels:** `codeatlas-rs` ships `abi3-py39` wheels, so one wheel covers
 CPython 3.9+. The release workflow builds manylinux (x86_64/aarch64),
 musllinux (x86_64/aarch64), macOS universal2, and Windows x86_64 wheels plus
-an sdist. Each wheel is installed and imported before upload. PyPI 0.8.0
-ships a macOS arm64 wheel + sdist; the remaining targets are built and
+an sdist. Each wheel is installed and imported before upload. PyPI ships a macOS arm64 wheel + sdist; the remaining targets are built and
 smoke-tested by the release workflow and reach PyPI when its upload job runs.
 
 ## PR architecture diff
