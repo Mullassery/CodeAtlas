@@ -1,6 +1,6 @@
 # Project Backlog
 
-> 2026-10-19 implementation findings: see [`../AUDIT_FINDINGS.md`](../AUDIT_FINDINGS.md).
+> 2026-10-19 implementation findings: see [`../AUDIT_FINDINGS.md`](internal/AUDIT_FINDINGS.md).
 
 Lightweight task tracking. IDs are stable; status ∈ `todo` | `doing` | `done` | `blocked`.
 Acceptance criteria (AC) and test evidence are recorded as they complete.

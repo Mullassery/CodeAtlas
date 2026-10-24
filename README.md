@@ -1,5 +1,11 @@
 # CodeAtlas
 
+[![CI](https://github.com/Mullassery/CodeAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/Mullassery/CodeAtlas/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/codeatlas-rs.svg)](https://pypi.org/project/codeatlas-rs/)
+[![Python](https://img.shields.io/pypi/pyversions/codeatlas-rs.svg)](https://pypi.org/project/codeatlas-rs/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
+[![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org/)
+
 Rust-native architecture maps for codebases. CodeAtlas scans a repository, extracts symbols and
 relationships with deterministic static analysis (tree-sitter), groups code into components, and
 documents the architecture as `analysis.json`, Markdown/Mermaid, HTML (Cytoscape), MDX, or
@@ -62,7 +68,7 @@ Python API.
 
 The 2026-10-19 implementation audit — including the Java extractor work,
 verification results, and remaining gaps — is recorded in
-[`AUDIT_FINDINGS.md`](AUDIT_FINDINGS.md).
+[`docs/internal/AUDIT_FINDINGS.md`](docs/internal/AUDIT_FINDINGS.md).
 
 ## Status & roadmap
 
@@ -117,7 +123,7 @@ Requires Rust (stable) and Python 3.9+ (3.12 recommended), with `maturin` for th
 **Rejected / deferred:**
 - Chat UI; LSP-level resolution now.
 
-Full shipped/blocked/rejected detail: [`QUEUE_STATUS.md`](QUEUE_STATUS.md).
+Full shipped/blocked/rejected detail: [`docs/internal/QUEUE_STATUS.md`](docs/internal/QUEUE_STATUS.md).
 
 ## License
 
