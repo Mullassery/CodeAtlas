@@ -65,7 +65,7 @@ Acceptance criteria (AC) and test evidence are recorded as they complete.
 | ID | Task | Status | AC |
 |---|---|---|---|
 | M8-1 | Security: symlink/path traversal, size limits, no exec | done | symlink/size/hostile-content tests |
-| M8-2 | Error-path tests, benchmarks | doing | green suite, clippy clean |
+| M8-2 | Error-path tests, benchmarks | done | `cargo test --workspace` green (42 core + pytest 21), `cargo clippy --workspace --all-targets -- -D warnings` clean, `cargo bench --bench analysis` runs (`analyze_200_python_files`, ~7.4 ms) |
 
 ## Milestone M9 — Additional languages
 | ID | Task | Status | AC |

@@ -25,6 +25,11 @@ tree-sitter-c-sharp.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "analysis"
+harness = false
 
 [lib]
 name = "codeatlas_core"

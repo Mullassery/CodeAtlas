@@ -7,6 +7,9 @@ All notable changes to CodeAtlas are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Criterion benchmark for the end-to-end analysis pipeline over a generated
+  200-file Python repository (`crates/core/benches/analysis.rs`, ~7.4 ms on
+  the reference machine). Completes the M8-2 hardening item.
 - Release hardening: the release workflow now merges every wheel artifact
   into one `dist/` (`actions/download-artifact` with `merge-multiple`), fails
   if a build job produces no wheel (`if-no-files-found: error`), and refuses
