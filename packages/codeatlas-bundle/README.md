@@ -1,6 +1,6 @@
 # codeatlas-bundle
 
-Bundle [CodeAtlas](https://github.com/Mullassery/CodeAtlas) architecture maps
+Bundle [CodeAtlas](../CodeAtlas) architecture maps
 into any repository so the map is versioned alongside the code.
 
 `codeatlas-bundle` runs the deterministic CodeAtlas analysis, renders the docs

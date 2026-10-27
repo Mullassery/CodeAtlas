@@ -1,6 +1,6 @@
 # CodeAtlas
 
-[![CI](https://github.com/Mullassery/CodeAtlas/actions/workflows/ci.yml/badge.svg)](https://github.com/Mullassery/CodeAtlas/actions/workflows/ci.yml)
+[![CI](../CodeAtlas/actions/workflows/ci.yml/badge.svg)](../CodeAtlas/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/codeatlas-rs.svg)](https://pypi.org/project/codeatlas-rs/)
 [![Python](https://img.shields.io/pypi/pyversions/codeatlas-rs.svg)](https://pypi.org/project/codeatlas-rs/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)

@@ -22,11 +22,11 @@ current `codeatlas-bundle` and pass `codeatlas-bundle check`.
 
 | Repository | Language | PR |
 |---|---|---|
-| [PyPerfGuard](https://github.com/Mullassery/PyPerfGuard) | Rust | [#1](https://github.com/Mullassery/PyPerfGuard/pull/1) |
-| [PyContextFold](https://github.com/Mullassery/PyContextFold) | Python/Rust | [#1](https://github.com/Mullassery/PyContextFold/pull/1) |
-| [PyTaskWireCheck](https://github.com/Mullassery/PyTaskWireCheck) | Python | [#5](https://github.com/Mullassery/PyTaskWireCheck/pull/5) |
-| [PyDeepMesh](https://github.com/Mullassery/PyDeepMesh) | Python | [#1](https://github.com/Mullassery/PyDeepMesh/pull/1) |
-| [PyAPICheck](https://github.com/Mullassery/PyAPICheck) | Rust | [#7](https://github.com/Mullassery/PyAPICheck/pull/7) |
+| [PyPerfGuard](../PyPerfGuard) | Rust | [#1](../PyPerfGuard/pull/1) |
+| [PyContextFold](../PyContextFold) | Python/Rust | [#1](../PyContextFold/pull/1) |
+| [PyTaskWireCheck](../PyTaskWireCheck) | Python | [#5](../PyTaskWireCheck/pull/5) |
+| [PyDeepMesh](../PyDeepMesh) | Python | [#1](../PyDeepMesh/pull/1) |
+| [PyAPICheck](../PyAPICheck) | Rust | [#7](../PyAPICheck/pull/7) |
 
 ## Follow-ups
 

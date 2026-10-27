@@ -8,7 +8,7 @@ receive fixes.
 ## Reporting a vulnerability
 
 Please do not open a public issue for a security vulnerability. Use GitHub's
-[private vulnerability reporting](https://github.com/Mullassery/CodeAtlas/security/advisories/new)
+[private vulnerability reporting](../CodeAtlas/security/advisories/new)
 for this repository. If that is unavailable, open an issue titled
 "Security contact request" with no vulnerability details.
 
