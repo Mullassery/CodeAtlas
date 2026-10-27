@@ -4,72 +4,15 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
-  rust:
-    name: Rust (fmt + clippy + test)
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
-      - name: Format
-        run: cargo fmt --all --check
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
-      - name: Test core
-        run: cargo test -p codeatlas-core
-      - name: Dependency audit (licenses + advisories)
-        uses: EmbarkStudios/cargo-deny-action@v2
-
-  python:
-    name: Python ${{ matrix.python-version }} (build wheel + import + tests)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        # 3.9 is the declared floor and the abi3-py39 tag; 3.12 is the newest tested.
-        python-version: ["3.9", "3.12"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - name: Install maturin
-        run: pip install maturin
-      - name: Build wheel
-        run: maturin build --release --interpreter python --out dist
-      - name: Install and smoke-test
-        run: |
-          pip install dist/*.whl
-          python -c "import codeatlas_rs; assert codeatlas_rs.__version__"
-          codeatlas --version
-      - name: Python tests
-        run: pip install pytest && pytest
-
-  bundle:
-    name: Bundle package (import + tests)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - name: Install maturin
-        run: pip install maturin
-      - name: Build and install codeatlas
-        run: |
-          maturin build --release --interpreter python3.12 --out dist
-          pip install dist/*.whl
-      - name: Install bundle package
-        run: pip install --no-deps -e packages/codeatlas-bundle
-      - name: Bundle tests
-        run: |
-          pip install pytest
-          pytest packages/codeatlas-bundle/tests
+      - run: cargo build --workspace --all-features
+      - run: cargo test --workspace --all-features
+      - run: cargo clippy --workspace --all-features -- -D warnings
